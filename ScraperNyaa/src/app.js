@@ -32,6 +32,8 @@ app.use('/api/nyaa', nyaaRoutes);
 
 // Mount Torznab / RSS Indexer routes (for Prowlarr / Jackett / Sonarr / Radarr)
 app.use('/api/torznab', torznabRoutes);
+// Alias for Prowlarr default API Path (/api)
+app.use('/api', torznabRoutes);
 
 if (process.env.NODE_ENV !== 'test') {
   app.listen(PORT, () => {
