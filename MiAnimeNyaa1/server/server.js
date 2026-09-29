@@ -1108,7 +1108,7 @@ app.get('/api/torrents/:query', async (req, res) => {
   try {
     const response = await axios.get(`${getConfig("PROWLARR_URL")}/api/v1/search`, {
       params: { apikey: getConfig("PROWLARR_API_KEY"), query, limit: 1000 },
-      timeout: 10000
+      timeout: 25000
     });
 
     const parseTorrentData = (title, description = "") => {
