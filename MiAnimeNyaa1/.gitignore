@@ -1,0 +1,10 @@
+node_modules/
+dist/
+data/config.json
+frontend.log
+server.log
+server/data/config.json
+.env
+.env.*
+*.log
+prueba.txt

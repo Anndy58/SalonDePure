@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="es" class="dark h-full bg-slate-950 text-slate-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>La Taberna - Nyaa Deep Scraper & Dashboard</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              800: '#166534',
+              900: '#14532d',
+              accent: '#8b5cf6',
+              accentHover: '#7c3aed'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <!-- Anime.js Animation Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
+</head>
+<body class="h-full flex flex-col font-sans antialiased bg-slate-950 text-slate-100 selection:bg-brand-500 selection:text-white">
+
+  <!-- Header / Navigation -->
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center gap-3">
+          <div class="bg-gradient-to-tr from-brand-600 to-purple-600 p-2.5 rounded-xl shadow-lg shadow-brand-500/20">
+            <i class="fa-solid fa-beer-mug-empty text-white text-xl"></i>
+          </div>
+          <div>
+            <h1 class="text-lg font-bold bg-gradient-to-r from-white via-slate-200 to-brand-500 bg-clip-text text-transparent">
+              La Taberna Nyaa
+            </h1>
+            <p class="text-xs text-slate-400 font-medium">Deep Anime Extractor & Scraper</p>
+          </div>
+        </div>
+
+        <!-- Navigation Tabs & API Status -->
+        <div class="flex items-center gap-4">
+          <nav class="flex bg-slate-950/60 p-1 rounded-xl border border-slate-800/80 text-sm font-medium">
+            <button id="tab-search" onclick="switchTab('search')" class="px-4 py-1.5 rounded-lg transition-all flex items-center gap-2 bg-slate-800 text-white shadow-sm">
+              <i class="fa-solid fa-magnifying-glass text-brand-500"></i> Búsqueda
+            </button>
+            <button id="tab-benchmark" onclick="switchTab('benchmark')" class="px-4 py-1.5 rounded-lg transition-all flex items-center gap-2 text-slate-400 hover:text-slate-200">
+              <i class="fa-solid fa-gauge-high text-amber-400"></i> Benchmark Live
+            </button>
+            <button id="tab-schedule" onclick="switchTab('schedule')" class="px-4 py-1.5 rounded-lg transition-all flex items-center gap-2 text-slate-400 hover:text-slate-200">
+              <i class="fa-solid fa-calendar-days text-purple-400"></i> Schedule
+            </button>
+            <button id="tab-api" onclick="switchTab('api')" class="px-4 py-1.5 rounded-lg transition-all flex items-center gap-2 text-slate-400 hover:text-slate-200">
+              <i class="fa-solid fa-plug text-emerald-400"></i> API Torznab
+            </button>
+          </nav>
+
+          <div id="api-status-badge" class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-xs text-slate-400">
+            <span class="relative flex h-2 w-2">
+              <span id="status-ping" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span id="status-dot" class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            <span id="status-text">API Online</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+    <!-- SEARCH VIEW -->
+    <section id="view-search" class="space-y-6">
+      <!-- Search Bar Control Box -->
+      <div class="bg-slate-900 border border-slate-800/90 rounded-2xl p-5 shadow-xl relative overflow-hidden">
+        <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -left-10 -top-10 w-48 h-48 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <form id="search-form" onsubmit="handleSearch(event)" class="space-y-4">
+          <div class="flex flex-col md:flex-row gap-3">
+            <div class="relative flex-1">
+              <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                <i class="fa-solid fa-magnifying-glass text-slate-400"></i>
+              </div>
+              <input type="text" id="search-query" placeholder="Buscar anime (ej: Frieren, Solo Leveling, One Piece, Mushoku...)"
+                class="w-full pl-11 pr-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500 transition-all font-medium">
+            </div>
+
+            <button type="submit" id="search-btn" class="px-6 py-3 bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-600 text-white font-semibold rounded-xl shadow-lg shadow-brand-500/20 hover:shadow-brand-500/30 transition-all flex items-center justify-center gap-2 min-w-[140px]">
+              <i class="fa-solid fa-bolt"></i> Buscar
+            </button>
+          </div>
+
+          <!-- Filters & Options -->
+          <div class="flex flex-wrap items-center justify-between gap-4 pt-2 border-t border-slate-800/60 text-xs sm:text-sm text-slate-400">
+            <div class="flex flex-wrap items-center gap-4">
+              <!-- Mode Select -->
+              <div class="flex items-center gap-2">
+                <span class="text-slate-300 font-semibold flex items-center gap-1"><i class="fa-solid fa-sliders text-brand-500"></i> Modo:</span>
+                <select id="mode-select" class="bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-slate-200 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-brand-500">
+                  <option value="full" selected>Completo (Listado + Deep Scraping)</option>
+                  <option value="shallow">Rápido (Sin Deep Scraping ~50ms)</option>
+                </select>
+              </div>
+
+              <!-- Spanish Only Filter -->
+              <label class="inline-flex items-center gap-1.5 cursor-pointer select-none text-xs text-slate-300 hover:text-white">
+                <input type="checkbox" id="spanish-only-toggle" class="rounded border-slate-800 text-brand-500 focus:ring-brand-500">
+                <span><i class="fa-solid fa-language text-purple-400"></i> Solo Subtítulos en Español</span>
+              </label>
+
+              <!-- Category Select -->
+              <div class="flex items-center gap-2">
+                <span class="text-slate-400">Categoría:</span>
+                <select id="category-select" class="bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-slate-200 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-brand-500">
+                  <option value="1_2" selected>Anime - English Translated (1_2)</option>
+                  <option value="1_3">Anime - Non-English Translated (1_3)</option>
+                  <option value="1_0">Anime - Todos (1_0)</option>
+                  <option value="1_1">Anime - Raw (1_1)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Limit & Min Seeders Select -->
+            <div class="flex items-center gap-3">
+              <div class="flex items-center gap-1">
+                <span class="text-slate-400">Min Seeders:</span>
+                <input type="number" id="min-seeders-input" value="0" min="0" max="999" class="w-14 bg-slate-950 border border-slate-800 rounded px-2 py-1 text-xs text-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-brand-500">
+              </div>
+
+              <div class="flex items-center gap-2">
+                <span class="text-slate-400">Límite:</span>
+                <select id="limit-select" class="bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-slate-200 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-brand-500">
+                  <option value="5">5 resultados</option>
+                  <option value="10" selected>10 resultados</option>
+                  <option value="15">15 resultados</option>
+                  <option value="20">20 resultados</option>
+                  <option value="50">50 resultados</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Quick Quick-Search Suggestions -->
+      <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs text-slate-400 scrollbar-none">
+        <span class="font-semibold text-slate-500 flex items-center gap-1">
+          <i class="fa-solid fa-fire text-amber-500"></i> Populares:
+        </span>
+        <button onclick="quickSearch('Solo Leveling')" class="bg-slate-900 border border-slate-800 hover:border-slate-700 hover:text-slate-200 px-3 py-1 rounded-full transition-all">Solo Leveling</button>
+        <button onclick="quickSearch('One Piece')" class="bg-slate-900 border border-slate-800 hover:border-slate-700 hover:text-slate-200 px-3 py-1 rounded-full transition-all">One Piece</button>
+        <button onclick="quickSearch('Frieren')" class="bg-slate-900 border border-slate-800 hover:border-slate-700 hover:text-slate-200 px-3 py-1 rounded-full transition-all">Frieren</button>
+        <button onclick="quickSearch('Jujutsu Kaisen')" class="bg-slate-900 border border-slate-800 hover:border-slate-700 hover:text-slate-200 px-3 py-1 rounded-full transition-all">Jujutsu Kaisen</button>
+        <button onclick="quickSearch('Demon Slayer')" class="bg-slate-900 border border-slate-800 hover:border-slate-700 hover:text-slate-200 px-3 py-1 rounded-full transition-all">Demon Slayer</button>
+      </div>
+
+      <!-- Results Section -->
+      <div id="search-results-container">
+        <!-- Initial empty state -->
+        <div id="results-empty" class="bg-slate-900/50 border border-dashed border-slate-800 rounded-2xl p-12 text-center space-y-3">
+          <div class="w-16 h-16 bg-slate-800/60 rounded-full flex items-center justify-center mx-auto text-slate-500 text-2xl">
+            <i class="fa-solid fa-compass"></i>
+          </div>
+          <h3 class="text-base font-semibold text-slate-300">Sin búsquedas activas</h3>
+          <p class="text-sm text-slate-500 max-w-md mx-auto">
+            Escribe un nombre de anime arriba o selecciona uno popular para comenzar el raspado profundo en Nyaa.
+          </p>
+        </div>
+
+        <!-- Loader -->
+        <div id="results-loader" class="hidden bg-slate-900/50 border border-slate-800 rounded-2xl p-12 text-center space-y-4">
+          <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-slate-700 border-t-brand-500"></div>
+          <p class="text-sm text-slate-300 font-medium animate-pulse" id="loader-text">
+            Raspando Nyaa.si y analizando metadatos...
+          </p>
+        </div>
+
+        <!-- Batch Action Toolbar & Results Table -->
+        <div id="results-list" class="hidden space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-3 text-xs text-slate-400 px-1 bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+            <div class="flex items-center gap-3">
+              <label class="inline-flex items-center gap-2 font-semibold text-slate-300 cursor-pointer">
+                <input type="checkbox" id="select-all-checkbox" onchange="toggleSelectAllTorrents(this.checked)" class="rounded border-slate-800 text-brand-500 focus:ring-brand-500">
+                <span id="results-count-badge">0 resultados</span>
+              </label>
+
+              <div id="batch-actions-bar" class="hidden items-center gap-2 border-l border-slate-800 pl-3">
+                <button onclick="copySelectedMagnets()" class="px-3 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 rounded-lg transition-all flex items-center gap-1.5 font-bold">
+                  <i class="fa-solid fa-magnet text-amber-400"></i> Copiar Magnets Seleccionados (<span id="selected-count">0</span>)
+                </button>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3 ml-auto">
+              <button onclick="exportSearchJSON()" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg transition-all flex items-center gap-1.5 font-medium border border-slate-700">
+                <i class="fa-solid fa-file-export text-brand-400"></i> Exportar JSON
+              </button>
+            </div>
+          </div>
+
+          <div id="results-cards" class="space-y-3">
+            <!-- Dynamic result cards inserted here -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BENCHMARK LIVE DASHBOARD VIEW -->
+    <section id="view-benchmark" class="hidden space-y-6">
+      <div class="bg-slate-900 border border-slate-800/90 rounded-2xl p-6 shadow-xl space-y-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-xl font-bold text-slate-100 flex items-center gap-2">
+              <i class="fa-solid fa-gauge-high text-amber-400 animate-pulse"></i> Panel de Prueba de Potencia y Velocidad Extrema
+            </h2>
+            <p class="text-xs text-slate-400 mt-1">
+              Pon a prueba en vivo el raspador profundo, midiendo la latencia en milisegundos, velocidad en torrents/segundo y verificación de subtítulos en español.
+            </p>
+          </div>
+
+          <button onclick="runLiveBenchmark()" id="bench-run-btn" class="px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-bold rounded-xl shadow-lg shadow-amber-500/20 transition-all flex items-center justify-center gap-2 min-w-[180px]">
+            <i class="fa-solid fa-play"></i> Ejecutar Benchmark
+          </button>
+        </div>
+
+        <!-- Controls Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 bg-slate-950 p-4 rounded-xl border border-slate-800/80">
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 mb-1">Búsqueda de prueba:</label>
+            <input type="text" id="bench-query" value="1080p" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs font-mono text-slate-200 focus:outline-none focus:ring-1 focus:ring-amber-400">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 mb-1">Categoría Nyaa:</label>
+            <select id="bench-category" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs font-mono text-slate-200 focus:outline-none focus:ring-1 focus:ring-amber-400">
+              <option value="1_0" selected>Anime - Todos (1_0)</option>
+              <option value="1_2">Anime - Translated (1_2)</option>
+              <option value="1_3">Anime - Non-English (1_3)</option>
+              <option value="1_1">Anime - Raw (1_1)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 mb-1">Modo de Scraping:</label>
+            <select id="bench-mode" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs font-mono text-amber-400 font-bold focus:outline-none focus:ring-1 focus:ring-amber-400">
+              <option value="full" selected>Completo (Listado + Deep Scraping)</option>
+              <option value="shallow">Rápido (Sin Deep Scraping ~50ms)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 mb-1">Bote / Tamaño de Lote:</label>
+            <select id="bench-limit" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs font-mono text-slate-200 focus:outline-none focus:ring-1 focus:ring-amber-400">
+              <option value="5">5 Torrents (Ultra Rápido)</option>
+              <option value="10" selected>10 Torrents (Estándar)</option>
+              <option value="20">20 Torrents (Carga Media)</option>
+              <option value="50">50 Torrents (Alta Carga)</option>
+              <option value="100">100 Torrents (Super Escala)</option>
+              <option value="200">200 Torrents (Gran Escala Máxima)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 mb-1">🛠️ Filtros & Debug:</label>
+            <div class="flex flex-wrap items-center gap-2 pt-0.5 text-xs text-slate-300">
+              <label class="inline-flex items-center gap-1 cursor-pointer select-none">
+                <input type="checkbox" id="debug-cache" checked class="rounded border-slate-800 text-amber-500 focus:ring-amber-400">
+                <span class="text-[11px]">Caché</span>
+              </label>
+
+              <label class="inline-flex items-center gap-1 cursor-pointer select-none">
+                <input type="checkbox" id="bench-spanish-only" class="rounded border-slate-800 text-purple-400 focus:ring-purple-400">
+                <span class="text-[11px] text-purple-300">ESP</span>
+              </label>
+
+              <div class="flex items-center gap-1 ml-auto">
+                <span class="text-[11px] text-slate-400">Hilos:</span>
+                <select id="debug-concurrency" class="bg-slate-900 border border-slate-800 rounded px-1.5 py-0.5 text-[11px] text-slate-200">
+                  <option value="5">5</option>
+                  <option value="10" selected>10</option>
+                  <option value="15">15</option>
+                  <option value="25">25</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metrics Cards Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+          <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4 space-y-1">
+            <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">Latencia Total</span>
+            <div class="flex items-baseline gap-1.5">
+              <span id="metric-duration" class="text-xl font-extrabold text-amber-400 font-mono">0</span>
+              <span class="text-xs text-slate-500 font-mono">ms</span>
+            </div>
+            <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+              <div id="bar-duration" class="bg-amber-400 h-full w-0 transition-all duration-500"></div>
+            </div>
+          </div>
+
+          <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4 space-y-1">
+            <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">Velocidad</span>
+            <div class="flex items-baseline gap-1.5">
+              <span id="metric-tps" class="text-xl font-extrabold text-emerald-400 font-mono">0</span>
+              <span class="text-xs text-slate-500 font-mono">t/s</span>
+            </div>
+            <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+              <div id="bar-tps" class="bg-emerald-400 h-full w-0 transition-all duration-500"></div>
+            </div>
+          </div>
+
+          <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4 space-y-1">
+            <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">Escaneados en Nyaa</span>
+            <div class="flex items-baseline gap-1.5">
+              <span id="metric-scanned" class="text-xl font-extrabold text-cyan-400 font-mono">0</span>
+              <span class="text-xs text-slate-500 font-mono">revisados</span>
+            </div>
+            <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+              <div id="bar-scanned" class="bg-cyan-400 h-full w-0 transition-all duration-500"></div>
+            </div>
+          </div>
+
+          <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4 space-y-1">
+            <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">Subtítulos Español</span>
+            <div class="flex items-baseline gap-1.5">
+              <span id="metric-spanish" class="text-xl font-extrabold text-purple-400 font-mono">0</span>
+              <span id="metric-total" class="text-xs text-slate-500 font-mono">/ 0 Válidos</span>
+            </div>
+            <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+              <div id="bar-spanish" class="bg-purple-400 h-full w-0 transition-all duration-500"></div>
+            </div>
+          </div>
+
+          <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4 space-y-1">
+            <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">Reintentos 429</span>
+            <div class="flex items-baseline gap-1.5">
+              <span id="metric-retry" class="text-xl font-extrabold text-rose-400 font-mono">0</span>
+              <span class="text-xs text-slate-500 font-mono">recuperados</span>
+            </div>
+            <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+              <div id="bar-retry" class="bg-rose-400 h-full w-0 transition-all duration-500"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Terminal / Logs Console -->
+        <div class="space-y-2 pt-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-300 flex items-center gap-2">
+              <i class="fa-solid fa-terminal text-emerald-400"></i> Consola de Logs Internos en Tiempo Real (Modo Logs)
+            </span>
+            <div class="flex items-center gap-2">
+              <button onclick="clearLogsConsole()" class="text-[11px] px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded transition-all flex items-center gap-1">
+                <i class="fa-solid fa-trash-can text-slate-400"></i> Limpiar Consola
+              </button>
+            </div>
+          </div>
+
+          <div id="logs-console" class="bg-slate-950 border border-slate-800 rounded-xl p-4 font-mono text-[11px] leading-relaxed text-slate-300 h-64 overflow-y-auto custom-scrollbar space-y-1 shadow-inner select-text">
+            <p class="text-slate-500 italic">🟢 [Consola de Logs lista]. Haz clic en "Ejecutar Benchmark" para ver la ejecución interna paso a paso en tiempo real...</p>
+          </div>
+        </div>
+
+        <!-- Live Results Sample Area -->
+        <div class="space-y-3 pt-2 border-t border-slate-800/80">
+          <div class="flex items-center justify-between text-xs text-slate-400">
+            <span class="font-bold text-slate-300">Torrents Procesados con Descripciones Limpias Extraídas:</span>
+            <span id="bench-status-msg" class="text-amber-400 font-mono">Haz clic en "Ejecutar Benchmark" para iniciar</span>
+          </div>
+
+          <div id="bench-results-list" class="space-y-3 max-h-80 overflow-y-auto custom-scrollbar p-1">
+            <!-- Dynamic cards inserted here -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCHEDULE VIEW -->
+    <section id="view-schedule" class="hidden space-y-6">
+      <div class="bg-slate-900 border border-slate-800/90 rounded-2xl p-6 shadow-xl space-y-4">
+        <div class="flex items-start justify-between">
+          <div>
+            <h2 class="text-lg font-bold text-slate-100 flex items-center gap-2">
+              <i class="fa-solid fa-calendar-days text-purple-400"></i> Generador de Schedule / Seguimiento
+            </h2>
+            <p class="text-xs text-slate-400">
+              Ingresa los nombres de los animes que estás siguiendo (separados por comas) para generar un reporte con los lanzamientos más recientes.
+            </p>
+          </div>
+        </div>
+
+        <form id="schedule-form" onsubmit="handleScheduleSubmit(event)" class="space-y-3">
+          <textarea id="schedule-input" rows="3" placeholder="Ejemplo: Solo Leveling, One Piece, Frieren, Mushoku Tensei"
+            class="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 font-mono"></textarea>
+
+          <div class="flex justify-end">
+            <button type="submit" id="schedule-btn" class="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-sm font-semibold rounded-xl shadow-lg shadow-purple-500/20 transition-all flex items-center gap-2">
+              <i class="fa-solid fa-list-check"></i> Generar Reporte de Lanzamientos
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Schedule Results Container -->
+      <div id="schedule-results" class="hidden space-y-6">
+        <!-- Loader -->
+        <div id="schedule-loader" class="hidden bg-slate-900/50 border border-slate-800 rounded-2xl p-12 text-center space-y-4">
+          <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-slate-700 border-t-purple-500"></div>
+          <p class="text-sm text-slate-300 font-medium animate-pulse">
+            Obteniendo últimas novedades para tus animes guardados...
+          </p>
+        </div>
+
+        <div id="schedule-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Dynamic anime schedule cards -->
+        </div>
+      </div>
+    </section>
+
+    <!-- API & TORZNAB VIEW -->
+    <section id="view-api" class="hidden space-y-6">
+      <div class="bg-slate-900 border border-slate-800/90 rounded-2xl p-6 shadow-xl space-y-6">
+        <div>
+          <h2 class="text-lg font-bold text-slate-100 flex items-center gap-2">
+            <i class="fa-solid fa-plug text-emerald-400"></i> Integración Indexer API (Torznab / Prowlarr / Jackett / Sonarr)
+          </h2>
+          <p class="text-xs text-slate-400 mt-1">
+            Esta aplicación expone un endpoint compatible con la especificación <strong>Torznab / Newznab</strong> y feeds RSS para conectarla con gestores automáticos como <strong>Prowlarr, Jackett, Sonarr, Radarr</strong> o tu propia aplicación.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Torznab Card -->
+          <div class="bg-slate-950 border border-slate-800/80 rounded-xl p-5 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold uppercase text-emerald-400 flex items-center gap-1.5">
+                <i class="fa-solid fa-server"></i> Torznab Indexer URL
+              </span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Torznab v1.0</span>
+            </div>
+            <p class="text-xs text-slate-400">
+              Usa esta URL en Prowlarr / Jackett o Sonarr como un Indexer genérico Torznab.
+            </p>
+            <div class="flex items-center gap-2">
+              <input type="text" id="api-torznab-url" readonly class="flex-1 bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs font-mono text-slate-200 select-all">
+              <button onclick="copyToClipboard(document.getElementById('api-torznab-url').value, 'URL de Torznab copiada')" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-lg transition-all flex items-center gap-1">
+                <i class="fa-solid fa-copy"></i> Copiar
+              </button>
+            </div>
+          </div>
+
+          <!-- RSS Feed Card -->
+          <div class="bg-slate-950 border border-slate-800/80 rounded-xl p-5 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold uppercase text-purple-400 flex items-center gap-1.5">
+                <i class="fa-solid fa-rss"></i> RSS Feed URL
+              </span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-purple-500/10 text-purple-400 border border-purple-500/20">RSS 2.0</span>
+            </div>
+            <p class="text-xs text-slate-400">
+              Canal RSS directo con soporte para descargas torrent y enlaces Magnet.
+            </p>
+            <div class="flex items-center gap-2">
+              <input type="text" id="api-rss-url" readonly class="flex-1 bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs font-mono text-slate-200 select-all">
+              <button onclick="copyToClipboard(document.getElementById('api-rss-url').value, 'URL RSS copiada')" class="px-3 py-2 bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold rounded-lg transition-all flex items-center gap-1">
+                <i class="fa-solid fa-copy"></i> Copiar
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Endpoints Documentation -->
+        <div class="space-y-3 border-t border-slate-800/80 pt-5">
+          <h3 class="text-sm font-bold text-slate-200 flex items-center gap-2">
+            <i class="fa-solid fa-code text-indigo-400"></i> Endpoints JSON disponibles para tu Aplicación
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs font-mono">
+            <div class="bg-slate-950 p-3 rounded-lg border border-slate-800/60 space-y-1">
+              <span class="text-emerald-400 font-bold block">GET /api/nyaa/search</span>
+              <p class="text-slate-400 text-[11px] font-sans">Busca torrents. Parámetros: <code>q</code>, <code>deep=true</code>, <code>limit</code>, <code>c</code>.</p>
+            </div>
+            <div class="bg-slate-950 p-3 rounded-lg border border-slate-800/60 space-y-1">
+              <span class="text-indigo-400 font-bold block">GET /api/nyaa/view/:id</span>
+              <p class="text-slate-400 text-[11px] font-sans">Obtiene detalles, descripción completa y lista de archivos por ID.</p>
+            </div>
+            <div class="bg-slate-950 p-3 rounded-lg border border-slate-800/60 space-y-1">
+              <span class="text-purple-400 font-bold block">POST /api/nyaa/schedule</span>
+              <p class="text-slate-400 text-[11px] font-sans">Envía <code>{ "queries": ["Title1", "Title2"] }</code> para recibir agrupados.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Modal View Details -->
+  <div id="details-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm overflow-y-auto">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-3xl shadow-2xl overflow-hidden my-8 flex flex-col max-h-[85vh]">
+      <!-- Modal Header -->
+      <div class="px-6 py-4 border-b border-slate-800 flex items-start justify-between bg-slate-900/90 sticky top-0 z-10">
+        <div class="pr-4">
+          <span id="modal-category" class="inline-block px-2.5 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase bg-brand-500/10 text-brand-400 border border-brand-500/20 mb-1">
+            ANIME
+          </span>
+          <h3 id="modal-title" class="text-base font-bold text-slate-100 leading-snug line-clamp-2">
+            Torrent Title
+          </h3>
+        </div>
+        <button onclick="closeModal()" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-all">
+          <i class="fa-solid fa-xmark text-xl"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-6 space-y-6 overflow-y-auto custom-scrollbar flex-1">
+        <!-- Quick stats grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="bg-slate-950 border border-slate-800 rounded-xl p-3">
+            <span class="text-slate-500 text-[11px] font-semibold uppercase block">Tamaño</span>
+            <span id="modal-size" class="text-sm font-bold text-slate-200">--</span>
+          </div>
+          <div class="bg-slate-950 border border-slate-800 rounded-xl p-3">
+            <span class="text-slate-500 text-[11px] font-semibold uppercase block">Seeders / Leechers</span>
+            <span id="modal-peers" class="text-sm font-bold text-emerald-400">-- / --</span>
+          </div>
+          <div class="bg-slate-950 border border-slate-800 rounded-xl p-3">
+            <span class="text-slate-500 text-[11px] font-semibold uppercase block">Resolución</span>
+            <span id="modal-resolution" class="text-sm font-bold text-indigo-400">--</span>
+          </div>
+          <div class="bg-slate-950 border border-slate-800 rounded-xl p-3">
+            <span class="text-slate-500 text-[11px] font-semibold uppercase block">Subtítulos</span>
+            <div id="modal-languages" class="flex flex-wrap gap-1 mt-0.5">
+              <!-- Language badges -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Description Box -->
+        <div class="space-y-2">
+          <h4 class="text-xs font-bold uppercase text-slate-400 flex items-center gap-1.5">
+            <i class="fa-solid fa-align-left text-brand-500"></i> Descripción Extraída (Deep Scrape)
+          </h4>
+          <div class="bg-slate-950 border border-slate-800/80 rounded-xl p-4 text-xs font-mono text-slate-300 leading-relaxed whitespace-pre-wrap max-h-60 overflow-y-auto select-text shadow-inner" id="modal-description">
+            Cargando descripción...
+          </div>
+        </div>
+
+        <!-- Files List -->
+        <div class="space-y-2">
+          <h4 class="text-xs font-bold uppercase text-slate-400 flex items-center gap-1.5">
+            <i class="fa-solid fa-folder-tree text-purple-400"></i> Archivos del Torrent
+          </h4>
+          <ul id="modal-files" class="bg-slate-950 border border-slate-800/80 rounded-xl p-3 text-xs font-mono text-slate-400 space-y-1 max-h-40 overflow-y-auto">
+            <li class="italic text-slate-600">Sin archivos listados</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="px-6 py-4 bg-slate-950/80 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3">
+        <a id="modal-nyaa-link" href="#" target="_blank" rel="noopener noreferrer" class="text-xs text-slate-400 hover:text-slate-200 flex items-center gap-1">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i> Ver en Nyaa.si
+        </a>
+
+        <div class="flex items-center gap-2">
+          <button id="modal-copy-magnet" onclick="" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5">
+            <i class="fa-solid fa-magnet text-amber-400"></i> Copiar Magnet Link
+          </button>
+          <a id="modal-download-torrent" href="#" class="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 shadow-md shadow-brand-500/20">
+            <i class="fa-solid fa-download"></i> Descargar .torrent
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-slate-900 border border-brand-500/50 text-slate-100 text-xs font-medium px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2">
+    <i id="toast-icon" class="fa-solid fa-circle-check text-brand-500 text-sm"></i>
+    <span id="toast-msg">Mensaje de notificación</span>
+  </div>
+
+  <!-- JavaScript App Logic -->
+  <script src="/js/app.js"></script>
+</body>
+</html>

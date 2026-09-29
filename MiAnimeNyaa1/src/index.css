@@ -1,0 +1,221 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Tilt+Neon&family=Yellowtail&display=swap');
+
+@import "tailwindcss";
+
+/* ============================================================
+   🍷 ESTILOS DE TABERNA - SOLO CLASES AUXILIARES
+   ============================================================ */
+
+/* Scrollbar estilo taberna */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #120a06;
+}
+::-webkit-scrollbar-thumb {
+  background: #4a2b18;
+  border-radius: 10px;
+  border: 1px solid #2a160d;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #6b3d22;
+}
+
+/* ============================================================
+   🔍 INPUT CON LUPA - CORREGIDO
+   ============================================================ */
+.search-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.search-input-wrapper .search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6b6255;
+  pointer-events: none;
+  z-index: 2;
+  transition: color 0.2s ease;
+}
+
+.search-input-wrapper input {
+  width: 100%;
+  padding: 12px 16px 12px 44px;
+  background: rgba(0, 0, 0, 0.7);
+  border: 2px solid #2a160d;
+  border-radius: 12px;
+  color: #f0e6d8;
+  font-size: 14px;
+  font-weight: 500;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.search-input-wrapper input:focus {
+  border-color: var(--radio-color, #d4af37);
+  box-shadow: 0 0 20px var(--radio-color, #d4af37)30;
+}
+
+.search-input-wrapper input:focus ~ .search-icon,
+.search-input-wrapper input:focus + .search-icon {
+  color: var(--radio-color, #d4af37);
+}
+
+.search-input-wrapper input::placeholder {
+  color: #6b6255;
+  font-weight: 400;
+  letter-spacing: 0.3px;
+}
+
+/* ============================================================
+   🍇 TARJETAS Y BORDES (clases auxiliares)
+   ============================================================ */
+.tavern-card {
+  background: rgba(15, 8, 5, 0.85);
+  border: 1px solid #2a160d;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(4px);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.radio-glow {
+  border-color: var(--radio-color, #d4af37);
+  box-shadow: 0 0 calc(var(--radio-intensity, 0) * 20px + 5px) var(--radio-color, #d4af37)40;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* ============================================================
+   🎬 BOTÓN DE TABERNA
+   ============================================================ */
+.tavern-btn {
+  background: linear-gradient(145deg, #1a0d06, #0d0603);
+  border: 1px solid #2a160d;
+  border-radius: 8px;
+  color: #a89f91;
+  padding: 8px 16px;
+  font-weight: 700;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.tavern-btn:hover {
+  border-color: var(--radio-color, #d4af37);
+  color: var(--radio-color, #d4af37);
+  box-shadow: 0 0 20px var(--radio-color, #d4af37)20;
+}
+
+.tavern-btn-primary {
+  background: linear-gradient(145deg, #d4af37, #a68c1f);
+  border-color: #d4af37;
+  color: #0d0603;
+}
+
+.tavern-btn-primary:hover {
+  background: linear-gradient(145deg, #e8c84a, #b8982a);
+  box-shadow: 0 0 30px #d4af3740;
+}
+
+/* ============================================================
+   📱 RESPONSIVE
+   ============================================================ */
+@media (max-width: 768px) {
+  .search-input-wrapper input {
+    font-size: 13px;
+    padding: 10px 14px 10px 40px;
+  }
+  .tavern-btn {
+    font-size: 9px;
+    padding: 6px 12px;
+  }
+}
+
+/* Scrollbar oculta para móvil */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+:root {
+  --radio-color: #d4af37;
+  --radio-intensity: 0.1;
+}
+
+/* Modo Bodega - colores más oscuros */
+.bodega-mode {
+  --radio-color: #8b0000;
+  --radio-intensity: 0.2;
+}
+
+.bodega-mode .premium-board {
+  border-color: #3d0a0a !important;
+  box-shadow: 0 0 30px rgba(139, 0, 0, 0.3) !important;
+}
+
+.bodega-mode .neon-text-main {
+  color: #3a1a1a;
+  text-shadow: 
+    0 0 5px rgba(139,0,0,0.3),
+    0 0 15px rgba(139,0,0,0.2);
+}
+
+.bodega-mode .neon-text-sub {
+  color: #6b1a1a;
+  text-shadow: 0 0 10px rgba(139,0,0,0.3);
+}
+
+/* ─── ESTILOS PARA RSS.APP IMAGEBOARD ────────────────────────────── */
+rssapp-imageboard {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+rssapp-imageboard .rss-imageboard-item {
+  background: rgba(15, 8, 5, 0.85) !important;
+  border: 1px solid #2a160d !important;
+  border-radius: 12px !important;
+  padding: 12px !important;
+  margin-bottom: 10px !important;
+  transition: all 0.3s ease !important;
+}
+
+rssapp-imageboard .rss-imageboard-item:hover {
+  border-color: #d4af37 !important;
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.2) !important;
+  transform: translateY(-2px) !important;
+}
+
+rssapp-imageboard .rss-imageboard-title {
+  color: #f0e6d8 !important;
+  font-weight: 700 !important;
+  font-size: 14px !important;
+  font-family: 'Tilt Neon', sans-serif !important;
+}
+
+rssapp-imageboard .rss-imageboard-description {
+  color: #a89f91 !important;
+  font-size: 12px !important;
+  line-height: 1.4 !important;
+}
+
+rssapp-imageboard .rss-imageboard-date {
+  color: #6b6255 !important;
+  font-size: 10px !important;
+  font-family: 'JetBrains Mono', monospace !important;
+}
+
+rssapp-imageboard .rss-imageboard-image {
+  border-radius: 8px !important;
+  border: 1px solid #2a160d !important;
+}

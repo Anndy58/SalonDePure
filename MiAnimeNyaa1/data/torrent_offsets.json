@@ -1,0 +1,458 @@
+{
+  "21": {
+    "offsetSeconds": 561600,
+    "updatedAt": "2026-09-27T15:39:05.599Z"
+  },
+  "235": {
+    "offsetSeconds": 5520,
+    "updatedAt": "2026-09-27T14:19:14.281Z"
+  },
+  "966": {
+    "offsetSeconds": 561600,
+    "updatedAt": "2026-09-27T16:18:38.665Z"
+  },
+  "2406": {
+    "offsetSeconds": -561600,
+    "updatedAt": "2026-09-27T16:53:37.610Z"
+  },
+  "8687": {
+    "offsetSeconds": 561600,
+    "updatedAt": "2026-09-27T16:18:16.313Z"
+  },
+  "103303": {
+    "offsetSeconds": 51060,
+    "updatedAt": "2026-09-27T16:56:17.171Z"
+  },
+  "118123": {
+    "offsetSeconds": 561600,
+    "updatedAt": "2026-09-27T16:53:13.705Z"
+  },
+  "135865": {
+    "offsetSeconds": 46800,
+    "updatedAt": "2026-09-27T07:36:14.496Z"
+  },
+  "137653": {
+    "offsetSeconds": -39120,
+    "updatedAt": "2026-09-27T14:20:40.981Z"
+  },
+  "137683": {
+    "offsetSeconds": 561600,
+    "updatedAt": "2026-09-27T16:53:58.775Z"
+  },
+  "140842": {
+    "offsetSeconds": -561600,
+    "updatedAt": "2026-09-27T16:17:41.464Z"
+  },
+  "152677": {
+    "offsetSeconds": -561600,
+    "updatedAt": "2026-09-27T16:53:42.466Z"
+  },
+  "158871": {
+    "offsetSeconds": 561600,
+    "updatedAt": "2026-09-27T16:52:51.530Z"
+  },
+  "160803": {
+    "offsetSeconds": -561600,
+    "updatedAt": "2026-09-27T16:18:25.871Z"
+  },
+  "165159": {
+    "offsetSeconds": -233460,
+    "updatedAt": "2026-09-27T16:18:13.771Z"
+  },
+  "171110": {
+    "offsetSeconds": -561600,
+    "updatedAt": "2026-09-27T16:18:41.183Z"
+  },
+  "176314": {
+    "offsetSeconds": 242160,
+    "updatedAt": "2026-09-27T14:18:25.750Z"
+  },
+  "178789": {
+    "offsetSeconds": 215880,
+    "updatedAt": "2026-09-27T14:17:43.370Z"
+  },
+  "180136": {
+    "offsetSeconds": 561600,
+    "updatedAt": "2026-09-27T16:18:11.263Z"
+  },
+  "182616": {
+    "offsetSeconds": 561600,
+    "updatedAt": "2026-09-27T16:18:28.607Z"
+  },
+  "183231": {
+    "offsetSeconds": -561600,
+    "updatedAt": "2026-09-27T16:18:31.113Z"
+  },
+  "184356": {
+    "offsetSeconds": -246270,
+    "updatedAt": "2026-09-27T16:17:16.487Z"
+  },
+  "185646": {
+    "offsetSeconds": 300,
+    "updatedAt": "2026-09-27T14:19:11.396Z"
+  },
+  "185756": {
+    "offsetSeconds": 2040,
+    "updatedAt": "2026-09-27T15:19:12.222Z"
+  },
+  "185874": {
+    "offsetSeconds": -561600,
+    "updatedAt": "2026-09-27T16:53:06.264Z"
+  },
+  "187166": {
+    "offsetSeconds": 561600,
+    "updatedAt": "2026-09-27T16:18:18.833Z"
+  },
+  "187260": {
+    "offsetSeconds": 561600,
+    "updatedAt": "2026-09-27T16:17:19.151Z"
+  },
+  "188525": {
+    "offsetSeconds": 86400,
+    "updatedAt": "2026-09-27T06:49:43.820Z"
+  },
+  "189046": {
+    "offsetSeconds": 3660,
+    "updatedAt": "2026-09-27T15:18:28.292Z"
+  },
+  "189123": {
+    "offsetSeconds": -561600,
+    "updatedAt": "2026-09-27T16:53:01.010Z"
+  },
+  "191832": {
+    "offsetSeconds": 123060,
+    "updatedAt": "2026-09-27T16:54:03.564Z"
+  },
+  "196017": {
+    "offsetSeconds": -28680,
+    "updatedAt": "2026-09-27T06:49:58.418Z"
+  },
+  "197754": {
+    "offsetSeconds": 561600,
+    "updatedAt": "2026-09-27T16:17:06.759Z"
+  },
+  "198946": {
+    "offsetSeconds": 60,
+    "updatedAt": "2026-09-27T14:18:18.105Z"
+  },
+  "199408": {
+    "offsetSeconds": 86400,
+    "updatedAt": "2026-09-27T07:47:43.876Z"
+  },
+  "200294": {
+    "offsetSeconds": -561600,
+    "updatedAt": "2026-09-27T16:18:08.640Z"
+  },
+  "202957": {
+    "offsetSeconds": 7200,
+    "updatedAt": "2026-09-27T14:19:17.170Z"
+  },
+  "203490": {
+    "offsetSeconds": -207000,
+    "updatedAt": "2026-09-27T16:18:36.147Z"
+  },
+  "204060": {
+    "offsetSeconds": 32400,
+    "updatedAt": "2026-09-27T06:59:05.153Z"
+  },
+  "204269": {
+    "offsetSeconds": -561600,
+    "updatedAt": "2026-09-27T16:52:43.649Z"
+  },
+  "204389": {
+    "offsetSeconds": 660,
+    "updatedAt": "2026-09-27T14:19:41.476Z"
+  },
+  "204656": {
+    "offsetSeconds": 60,
+    "updatedAt": "2026-09-27T14:17:59.538Z"
+  },
+  "205772": {
+    "offsetSeconds": 59400,
+    "updatedAt": "2026-09-27T06:36:20.698Z"
+  },
+  "206523": {
+    "offsetSeconds": 1920,
+    "updatedAt": "2026-09-27T15:18:59.543Z"
+  },
+  "207254": {
+    "offsetSeconds": -121110,
+    "updatedAt": "2026-09-27T16:18:06.315Z"
+  },
+  "207809": {
+    "offsetSeconds": 3420,
+    "updatedAt": "2026-09-27T14:18:07.877Z"
+  },
+  "208025": {
+    "offsetSeconds": -3600,
+    "updatedAt": "2026-09-27T14:19:48.769Z"
+  },
+  "209463": {
+    "offsetSeconds": -561600,
+    "updatedAt": "2026-09-27T16:17:04.229Z"
+  },
+  "210031": {
+    "offsetSeconds": 1860,
+    "updatedAt": "2026-09-27T16:18:33.620Z"
+  },
+  "210482": {
+    "offsetSeconds": -561600,
+    "updatedAt": "2026-09-27T16:18:21.200Z"
+  },
+  "211181": {
+    "offsetSeconds": -80640,
+    "updatedAt": "2026-09-27T14:20:33.080Z"
+  },
+  "211877": {
+    "offsetSeconds": -561600,
+    "updatedAt": "2026-09-27T16:18:43.551Z"
+  },
+  "212888": {
+    "offsetSeconds": 600,
+    "updatedAt": "2026-09-27T15:19:09.779Z"
+  },
+  "213359": {
+    "offsetSeconds": 60120,
+    "updatedAt": "2026-09-27T14:17:48.333Z"
+  },
+  "213486": {
+    "offsetSeconds": 60,
+    "updatedAt": "2026-09-27T14:20:46.094Z"
+  },
+  "215835": {
+    "offsetSeconds": 960,
+    "updatedAt": "2026-09-27T15:19:14.593Z"
+  },
+  "216860": {
+    "offsetSeconds": -561600,
+    "updatedAt": "2026-09-27T16:17:27.942Z"
+  },
+  "grow up show: himawari no circus-dan": {
+    "offsetSeconds": -28680,
+    "updatedAt": "2026-09-27T06:49:58.440Z"
+  },
+  "nijusseiki denki mokuroku: eureka evrika": {
+    "offsetSeconds": 51060,
+    "updatedAt": "2026-09-27T16:56:17.188Z"
+  },
+  "youjo senki ii": {
+    "offsetSeconds": 46800,
+    "updatedAt": "2026-09-27T07:36:14.520Z"
+  },
+  "sora wa akai kawa no hotori": {
+    "offsetSeconds": 3420,
+    "updatedAt": "2026-09-27T14:18:07.915Z"
+  },
+  "candy caries": {
+    "offsetSeconds": 59400,
+    "updatedAt": "2026-09-27T06:36:20.721Z"
+  },
+  "ao no hako season 2": {
+    "offsetSeconds": -561600,
+    "updatedAt": "2026-09-27T16:53:01.021Z"
+  },
+  "kore kaite shine": {
+    "offsetSeconds": 86400,
+    "updatedAt": "2026-09-27T06:49:43.837Z"
+  },
+  "yasei no last boss ga arawareta! 2nd season": {
+    "offsetSeconds": 660,
+    "updatedAt": "2026-09-27T14:19:41.502Z"
+  },
+  "tetsunabe no jan!": {
+    "offsetSeconds": 32400,
+    "updatedAt": "2026-09-27T06:59:05.176Z"
+  },
+  "dark summoner to dekiteiru": {
+    "offsetSeconds": -3600,
+    "updatedAt": "2026-09-27T14:19:48.793Z"
+  },
+  "buchigire reijou wa houfuku wo chikaimashita.: madousho no chikara de sokoku wo tataki tsubushimasu": {
+    "offsetSeconds": 86400,
+    "updatedAt": "2026-09-27T07:47:43.887Z"
+  },
+  "bleach: sennen kessen-hen - kashin-tan": {
+    "offsetSeconds": -561600,
+    "updatedAt": "2026-09-27T16:53:06.275Z"
+  },
+  "liar game": {
+    "offsetSeconds": 561600,
+    "updatedAt": "2026-09-27T16:17:06.772Z"
+  },
+  "mahou shoujo ikusei keikaku: restart": {
+    "offsetSeconds": -561600,
+    "updatedAt": "2026-09-27T16:18:25.880Z"
+  },
+  "choujun! choujou senpai": {
+    "offsetSeconds": -561600,
+    "updatedAt": "2026-09-27T16:18:08.649Z"
+  },
+  "kimi ga shinu made koi wo shitai": {
+    "offsetSeconds": 561600,
+    "updatedAt": "2026-09-27T16:17:19.160Z"
+  },
+  "mofusand": {
+    "offsetSeconds": 60,
+    "updatedAt": "2026-09-27T14:17:59.571Z"
+  },
+  "clevatess ii: majuu no ou to itsuwari no yuusha denshou": {
+    "offsetSeconds": 60,
+    "updatedAt": "2026-09-27T14:18:18.137Z"
+  },
+  "dogul wang": {
+    "offsetSeconds": -246270,
+    "updatedAt": "2026-09-27T16:17:16.496Z"
+  },
+  "re:zero kara hajimeru isekai seikatsu 4th season": {
+    "offsetSeconds": 3660,
+    "updatedAt": "2026-09-27T15:18:28.314Z"
+  },
+  "thunder 3": {
+    "offsetSeconds": -121110,
+    "updatedAt": "2026-09-27T16:18:06.326Z"
+  },
+  "chiikawa": {
+    "offsetSeconds": -561600,
+    "updatedAt": "2026-09-27T16:17:41.475Z"
+  },
+  "ganso! bandori-chan": {
+    "offsetSeconds": 561600,
+    "updatedAt": "2026-09-27T16:18:18.848Z"
+  },
+  "tsuihou sareta tensei juukishi wa game chishiki de musou suru": {
+    "offsetSeconds": 561600,
+    "updatedAt": "2026-09-27T16:18:11.273Z"
+  },
+  "beyblade x": {
+    "offsetSeconds": -233460,
+    "updatedAt": "2026-09-27T16:18:13.781Z"
+  },
+  "jojo no kimyou na bouken: steel ball run - 2nd & 3rd stage": {
+    "offsetSeconds": -561600,
+    "updatedAt": "2026-09-27T16:18:21.210Z"
+  },
+  "nige jouzu no wakagimi 2nd season": {
+    "offsetSeconds": 561600,
+    "updatedAt": "2026-09-27T16:18:28.623Z"
+  },
+  "pocket monsters (2023)": {
+    "offsetSeconds": 561600,
+    "updatedAt": "2026-09-27T16:52:51.541Z"
+  },
+  "rilakkuma": {
+    "offsetSeconds": -561600,
+    "updatedAt": "2026-09-27T16:18:31.124Z"
+  },
+  "uchi no otouto-domo ga sumimasen": {
+    "offsetSeconds": -207000,
+    "updatedAt": "2026-09-27T16:18:36.158Z"
+  },
+  "crayon shin-chan": {
+    "offsetSeconds": 561600,
+    "updatedAt": "2026-09-27T16:18:38.674Z"
+  },
+  "doraemon (2005)": {
+    "offsetSeconds": 561600,
+    "updatedAt": "2026-09-27T16:18:16.322Z"
+  },
+  "honzuki no gekokujou: ryoushu no youjo": {
+    "offsetSeconds": -561600,
+    "updatedAt": "2026-09-27T16:18:41.192Z"
+  },
+  "koupen-chan": {
+    "offsetSeconds": 300,
+    "updatedAt": "2026-09-27T14:19:11.438Z"
+  },
+  "meitantei conan": {
+    "offsetSeconds": 5520,
+    "updatedAt": "2026-09-27T14:19:14.309Z"
+  },
+  "meitantei precure!": {
+    "offsetSeconds": 7200,
+    "updatedAt": "2026-09-27T14:19:17.200Z"
+  },
+  "odekake kozame season 2": {
+    "offsetSeconds": -561600,
+    "updatedAt": "2026-09-27T16:52:43.661Z"
+  },
+  "onegai aipri": {
+    "offsetSeconds": 1920,
+    "updatedAt": "2026-09-27T15:18:59.558Z"
+  },
+  "punirunes puni 4": {
+    "offsetSeconds": -561600,
+    "updatedAt": "2026-09-27T16:17:27.960Z"
+  },
+  "holo no graffiti": {
+    "offsetSeconds": 561600,
+    "updatedAt": "2026-09-27T16:53:13.714Z"
+  },
+  "kanata kara": {
+    "offsetSeconds": -561600,
+    "updatedAt": "2026-09-27T16:17:04.244Z"
+  },
+  "kanojo no tomodachi": {
+    "offsetSeconds": -561600,
+    "updatedAt": "2026-09-27T16:18:43.559Z"
+  },
+  "mushoku tensei iii: isekai ittara honki dasu": {
+    "offsetSeconds": 215880,
+    "updatedAt": "2026-09-27T14:17:43.402Z"
+  },
+  "one piece": {
+    "offsetSeconds": 561600,
+    "updatedAt": "2026-09-27T15:39:05.624Z"
+  },
+  "sazae-san": {
+    "offsetSeconds": -561600,
+    "updatedAt": "2026-09-27T16:53:37.621Z"
+  },
+  "seihantai na kimi to boku 2nd season": {
+    "offsetSeconds": 1860,
+    "updatedAt": "2026-09-27T16:18:33.630Z"
+  },
+  "temppal: item no chikara": {
+    "offsetSeconds": 600,
+    "updatedAt": "2026-09-27T15:19:09.807Z"
+  },
+  "yami shibai 17": {
+    "offsetSeconds": 60120,
+    "updatedAt": "2026-09-27T14:17:48.372Z"
+  },
+  "douluo dalu 2: jueshi tangmen": {
+    "offsetSeconds": 561600,
+    "updatedAt": "2026-09-27T16:53:58.785Z"
+  },
+  "mu shen ji 4": {
+    "offsetSeconds": -80640,
+    "updatedAt": "2026-09-27T14:20:33.113Z"
+  },
+  "shiguang dailiren iii": {
+    "offsetSeconds": 123060,
+    "updatedAt": "2026-09-27T16:54:03.575Z"
+  },
+  "xian ni": {
+    "offsetSeconds": -39120,
+    "updatedAt": "2026-09-27T14:20:41.010Z"
+  },
+  "you shou yan 6th season": {
+    "offsetSeconds": 60,
+    "updatedAt": "2026-09-27T14:20:46.122Z"
+  },
+  "tantei wa mou, shindeiru. season 2": {
+    "offsetSeconds": -561600,
+    "updatedAt": "2026-09-27T16:53:42.476Z"
+  },
+  "sasaki to pii-chan season 2": {
+    "offsetSeconds": 242160,
+    "updatedAt": "2026-09-27T14:18:25.773Z"
+  },
+  "tensei kizoku, kantei skill de nariagaru 3rd season": {
+    "offsetSeconds": 2040,
+    "updatedAt": "2026-09-27T15:19:12.236Z"
+  },
+  "umayuru: full gate!": {
+    "offsetSeconds": 960,
+    "updatedAt": "2026-09-27T15:19:14.627Z"
+  }
+}

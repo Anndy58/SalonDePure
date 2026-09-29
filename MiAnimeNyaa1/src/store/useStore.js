@@ -1,0 +1,31 @@
+import { create } from 'zustand';
+
+export const useStore = create((set) => ({
+  library: {},
+  watched: {},
+  tab: "calendario",
+  openAnime: null,
+  modoBodega: false,
+  anilistUser: null,
+  anilistToken: null,
+  recommendations: [],
+  stuckCount: 0,
+  stuckItems: [],
+  activeDownloads: [],
+  sonarrSeries: [],
+  hiddenStuckIds: [],
+
+  setLibrary: (library) => set({ library }),
+  setWatched: (watched) => set({ watched }),
+  setTab: (tab) => set({ tab }),
+  setOpenAnime: (openAnime) => set({ openAnime }),
+  setModoBodega: (modoBodega) => set({ modoBodega }),
+  setAnilistUser: (anilistUser) => set({ anilistUser }),
+  setAnilistToken: (anilistToken) => set({ anilistToken }),
+  setRecommendations: (recommendations) => set({ recommendations }),
+  setStuckCount: (stuckCount) => set({ stuckCount }),
+  setStuckItems: (stuckItems) => set({ stuckItems }),
+  setActiveDownloads: (activeDownloads) => set({ activeDownloads }),
+  setSonarrSeries: (sonarrSeries) => set({ sonarrSeries }),
+  setHiddenStuckIds: (hiddenStuckIds) => set({ hiddenStuckIds }),
+}));
