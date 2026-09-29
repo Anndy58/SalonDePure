@@ -30,7 +30,10 @@ export function getTorznabCapabilitiesXml() {
     <category id="5000" name="TV">
       <subcat id="5070" name="TV/Anime" />
     </category>
-    <category id="2000" name="Movies" />
+    <category id="2000" name="Movies">
+      <subcat id="2070" name="Movies/Anime" />
+    </category>
+    <category id="100001" name="Anime" />
   </categories>
 </caps>`;
 }
