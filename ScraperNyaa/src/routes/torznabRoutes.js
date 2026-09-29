@@ -10,7 +10,7 @@ const router = express.Router();
  */
 router.get('/', async (req, res) => {
   try {
-    const { t = 'search', q = '', deep = 'false', limit = '20', c = '1_2' } = req.query;
+    const { t = 'search', q = '', deep = 'true', limit = '20', c = '1_2' } = req.query;
     const baseUrl = `${req.protocol}://${req.get('host')}`;
 
     // Capabilities check

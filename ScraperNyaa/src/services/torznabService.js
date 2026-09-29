@@ -30,7 +30,10 @@ export function getTorznabCapabilitiesXml() {
     <category id="5000" name="TV">
       <subcat id="5070" name="TV/Anime" />
     </category>
-    <category id="2000" name="Movies" />
+    <category id="2000" name="Movies">
+      <subcat id="2070" name="Movies/Anime" />
+    </category>
+    <category id="100001" name="Anime" />
   </categories>
 </caps>`;
 }
@@ -60,13 +63,32 @@ export function generateTorznabXml(items = [], baseUrl = '') {
     if (item.metadata?.resolution) {
       attrs.push(`<torznab:attr name="resolution" value="${escapeXml(item.metadata.resolution)}" />`);
     }
+
+    // Language attributes for Prowlarr / Sonarr / Radarr filtering
+    if (item.metadata?.hasSpanish) {
+      attrs.push(`<torznab:attr name="language" value="Spanish" />`);
+    } else if (item.metadata?.hasEnglish) {
+      attrs.push(`<torznab:attr name="language" value="English" />`);
+    } else if (item.metadata?.isMulti) {
+      attrs.push(`<torznab:attr name="language" value="Multi" />`);
+    }
+
     attrs.push(`<torznab:attr name="category" value="5070" />`);
 
-    const descriptionTag = item.descriptionText ? `<description>${escapeXml(item.descriptionText)}</description>` : '';
+    // Enhance title with language tags if not already in title string for easy Prowlarr visibility
+    let enhancedTitle = item.title;
+    if (item.metadata?.hasSpanish && !/\[(?:esp|espanol|español|spa|spanish|lat|latino)\]/i.test(enhancedTitle)) {
+      enhancedTitle = `${enhancedTitle} [ESP]`;
+    } else if (item.metadata?.isMulti && !/\[(?:multi|multi-subs|multisub)\]/i.test(enhancedTitle)) {
+      enhancedTitle = `${enhancedTitle} [MULTI]`;
+    }
+
+    const descriptionContent = item.descriptionText || item.title;
+    const descriptionTag = `<description>${escapeXml(descriptionContent)}</description>`;
 
     return `
     <item>
-      <title>${escapeXml(item.title)}</title>
+      <title>${escapeXml(enhancedTitle)}</title>
       <guid isPermaLink="false">${escapeXml(item.id || item.viewUrl)}</guid>
       <link>${escapeXml(item.magnetUrl || item.viewUrl)}</link>
       <comments>${escapeXml(item.viewUrl)}</comments>
