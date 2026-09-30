@@ -1,6 +1,8 @@
-import React, { useState, useEffect, useMemo, memo } from "react";
+import React, { useState, useEffect, useMemo, memo, useRef } from "react";
 import { Tv, Star } from "lucide-react";
 import { STATUS } from "./StatusButtons";
+import { animateButtonPress } from "../utils/animeUtils";
+import anime from "animejs";
 
 const AiringCountdown = memo(({ nextAiringAt }) => {
   const [timeLeft, setTimeLeft] = useState("");
@@ -45,14 +47,42 @@ const CoverCard = memo(({ anime, statusKey, onOpen, colors, watchedCount, viewMo
   const totalEps = Number(anime.localCount || anime.episodes);
   const progressPercent = (totalEps > 0 && watchedCount > 0) ? Math.min((watchedCount / totalEps) * 100, 100) : 0;
 
+  const cardRef = useRef(null);
+
+  const handleMouseEnter = () => {
+    if (cardRef.current) {
+      anime({
+        targets: cardRef.current,
+        scale: 1.03,
+        duration: 250,
+        easing: 'easeOutQuad'
+      });
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (cardRef.current) {
+      anime({
+        targets: cardRef.current,
+        scale: 1,
+        duration: 200,
+        easing: 'easeOutQuad'
+      });
+    }
+  };
+
   // ========== MODO LISTA ==========
   if (viewMode === 'list') {
     return (
       <div 
-        className="group relative flex items-center overflow-hidden rounded-lg transition-all duration-300 hover:bg-white/5 border h-20 bg-black/40 hover:shadow-xl pr-4 cursor-pointer"
+        ref={cardRef}
+        className="group relative flex items-center overflow-hidden rounded-lg transition-colors duration-300 hover:bg-white/5 border h-20 bg-black/40 hover:shadow-xl pr-4 cursor-pointer"
         style={{ borderColor: 'var(--radio-color, #2a160d)' }}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
         onClick={(e) => {
           e.preventDefault();
+          animateButtonPress(e.currentTarget);
           onOpen();
         }}
       >
@@ -112,16 +142,18 @@ const CoverCard = memo(({ anime, statusKey, onOpen, colors, watchedCount, viewMo
   // ========== MODO GRID ==========
   return (
     <div
-      className="group relative flex flex-col overflow-hidden rounded-xl transition-all duration-300 border h-full bg-black/60 hover:shadow-2xl hover:scale-[1.02] hover:border-[var(--radio-color,#d4af37)] cursor-pointer"
+      ref={cardRef}
+      className="group relative flex flex-col overflow-hidden rounded-xl transition-colors duration-300 border h-full bg-black/60 hover:shadow-2xl hover:border-[var(--radio-color,#d4af37)] cursor-pointer"
       style={{
         borderColor: 'var(--radio-color, #2a160d)',
-        transition: 'transform 0.2s ease-out, box-shadow 0.2s ease-out, border-color 0.2s ease-out',
         borderBottom: `2px solid var(--radio-color, #d4af37)`,
-        transform: 'scale(1)',
         willChange: 'transform, border-color',
       }}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       onClick={(e) => {
         e.preventDefault();
+        animateButtonPress(e.currentTarget);
         onOpen();
       }}
     >

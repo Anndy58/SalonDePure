@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback, memo, useRef } from "react";
 import { ArrowLeft, Loader2, FolderOpen, Check, MonitorPlay, Search, Info, Download, Star, RefreshCw, Settings2, X, FileVideo, Copy, Play, Plus, Minus, Edit2, LayoutList, LayoutGrid, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Image as ImageIcon, Film, Radio, ExternalLink, Sparkles, Maximize2, Zap } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import anime from "animejs";
+import { animateIn, animateModalIn, animateButtonPress } from "../utils/animeUtils";
 import { Virtuoso, VirtuosoGrid } from "react-virtuoso";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
@@ -116,8 +117,7 @@ const TorrentCardItem = memo(({ torrent, fallbackImage, onOpenLightbox, onDownlo
   const activeImages = enrichedImages.length > 0 ? enrichedImages : torrent.images;
 
   return (
-    <motion.div
-      whileHover={{ y: -3 }}
+    <div
       className={`group relative flex flex-col bg-black/60 rounded-xl border ${healthBorder} overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 h-full w-full min-w-0`}
     >
       <div className="relative w-full aspect-video bg-black/90 overflow-hidden rounded-t-xl shrink-0">
@@ -185,7 +185,7 @@ const TorrentCardItem = memo(({ torrent, fallbackImage, onOpenLightbox, onDownlo
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 });
 
@@ -685,11 +685,8 @@ const AnimeDetailScreen = memo(({
 
   return (
     <>
-      <motion.div
-        initial={{ opacity: 0, scale: 0.98 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.98 }}
-        transition={{ duration: 0.25 }}
+      <div
+        ref={(el) => animateIn(el, { duration: 350 })}
         className="fixed inset-0 z-[60] flex flex-col h-screen max-h-screen overflow-hidden text-gray-200"
         style={{ backgroundColor: `${COLORS.ink}f6`, backdropFilter: 'blur(25px)' }}
       >
@@ -709,23 +706,19 @@ const AnimeDetailScreen = memo(({
         )}
 
         {/* NOTIFICACIÓN FLOTANTE ANIMADA */}
-        <AnimatePresence>
-          {notification && (
-            <motion.div
-              initial={{ opacity: 0, y: -20, scale: 0.9 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -20, scale: 0.9 }}
-              className={`fixed top-4 right-6 z-[80] px-5 py-3 rounded-2xl shadow-2xl border-2 backdrop-blur-2xl transition-all font-medium text-xs sm:text-sm flex items-center gap-2 ${
-                notification.type === 'loading' ? 'bg-blue-950/90 border-blue-500/80 text-blue-200' :
-                notification.type === 'success' ? 'bg-green-950/90 border-green-500/80 text-green-200' :
-                notification.type === 'info' ? 'bg-yellow-950/90 border-yellow-500/80 text-yellow-200' :
-                'bg-red-950/90 border-red-500/80 text-red-200'
-              }`}
-            >
-              {notification.message}
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {notification && (
+          <div
+            ref={(el) => animateModalIn(el, { duration: 250 })}
+            className={`fixed top-4 right-6 z-[80] px-5 py-3 rounded-2xl shadow-2xl border-2 backdrop-blur-2xl transition-all font-medium text-xs sm:text-sm flex items-center gap-2 ${
+              notification.type === 'loading' ? 'bg-blue-950/90 border-blue-500/80 text-blue-200' :
+              notification.type === 'success' ? 'bg-green-950/90 border-green-500/80 text-green-200' :
+              notification.type === 'info' ? 'bg-yellow-950/90 border-yellow-500/80 text-yellow-200' :
+              'bg-red-950/90 border-red-500/80 text-red-200'
+            }`}
+          >
+            {notification.message}
+          </div>
+        )}
 
         <div className="relative z-10 flex flex-col h-full w-full max-w-[1700px] mx-auto px-3 sm:px-6 md:px-8 py-3 min-h-0 overflow-hidden">
 
@@ -957,16 +950,11 @@ const AnimeDetailScreen = memo(({
                 </div>
 
                 {/* CONTENIDO DE LAS PESTAÑAS (TRANSICIÓN DE FADE PURA SIN SALTOS) */}
-                <AnimatePresence mode="wait">
-                  {activeTab === 'torrents' ? (
-                    <motion.div
-                      key="tab-torrents"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                      className="p-3.5 rounded-2xl border border-white/10 bg-black/40 backdrop-blur-md shadow-xl flex flex-col gap-3 flex-1 min-h-0 overflow-hidden"
-                    >
+                {activeTab === 'torrents' ? (
+                  <div
+                    ref={(el) => animateIn(el, { duration: 250 })}
+                    className="p-3.5 rounded-2xl border border-white/10 bg-black/40 backdrop-blur-md shadow-xl flex flex-col gap-3 flex-1 min-h-0 overflow-hidden"
+                  >
                       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 shrink-0">
                         <div className="flex items-center gap-2">
                           <Search size={16} style={{ color: 'var(--radio-color, #d4af37)' }} />
@@ -1129,14 +1117,10 @@ const AnimeDetailScreen = memo(({
                           </>
                         )}
                       </div>
-                    </motion.div>
+                    </div>
                   ) : (
-                    <motion.div
-                      key="tab-episodes"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.2 }}
+                    <div
+                      ref={(el) => animateIn(el, { duration: 250 })}
                       className="flex flex-col gap-4 flex-1 min-h-0 overflow-y-auto custom-scrollbar"
                     >
                       {/* ARCHIVOS LOCALES */}
@@ -1299,9 +1283,8 @@ const AnimeDetailScreen = memo(({
                           </div>
                         </div>
                       )}
-                    </motion.div>
+                    </div>
                   )}
-                </AnimatePresence>
               </div>
 
             </div>
@@ -1336,32 +1319,28 @@ const AnimeDetailScreen = memo(({
             </div>
           </div>
         )}
-      </motion.div>
+      </div>
 
       {/* LIGHTBOX PREVIEW EN PANTALLA COMPLETA */}
-      <AnimatePresence>
-        {lightboxImage && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+      {lightboxImage && (
+        <div
+          ref={(el) => animateIn(el, { duration: 200 })}
+          onClick={() => setLightboxImage(null)}
+          className="fixed inset-0 z-[120] bg-black/90 backdrop-blur-xl flex items-center justify-center p-4 cursor-zoom-out"
+        >
+          <button
             onClick={() => setLightboxImage(null)}
-            className="fixed inset-0 z-[120] bg-black/90 backdrop-blur-xl flex items-center justify-center p-4 cursor-zoom-out"
+            className="absolute top-6 right-6 p-3 rounded-full bg-black/60 text-white hover:bg-white/20 transition-all border border-white/20 cursor-pointer"
           >
-            <button
-              onClick={() => setLightboxImage(null)}
-              className="absolute top-6 right-6 p-3 rounded-full bg-black/60 text-white hover:bg-white/20 transition-all border border-white/20"
-            >
-              <X size={24} />
-            </button>
-            <img
-              src={lightboxImage}
-              alt="Preview Fullscreen"
-              className="max-w-full max-h-[90vh] object-contain rounded-2xl shadow-2xl border border-white/10"
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+            <X size={24} />
+          </button>
+          <img
+            src={lightboxImage}
+            alt="Preview Fullscreen"
+            className="max-w-full max-h-[90vh] object-contain rounded-2xl shadow-2xl border border-white/10"
+          />
+        </div>
+      )}
 
       {showVisualSettings && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-md">

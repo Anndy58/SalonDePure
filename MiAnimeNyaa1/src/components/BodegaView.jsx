@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef, memo } from 'react';
 import { Wine, Grape, ArrowLeft as ArrowLeftIcon, Save, Plus } from 'lucide-react';
-import { motion } from 'framer-motion';
+import anime from 'animejs';
+import { animateIn, animateButtonPress } from '../utils/animeUtils';
 
 import { useStore } from '../store/useStore';
 
@@ -341,15 +342,13 @@ const BodegaView = memo(({ onVolver }) => {
 
       {/* Cabecera con botón volver y título */}
       <div className="w-full max-w-[1500px] mx-auto flex justify-between items-start px-4 sm:px-12 pt-4 sm:pt-6 pb-2 shrink-0 relative z-30">
-        <motion.div
-          initial={{ y: -20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ type: 'spring', stiffness: 60, damping: 15 }}
+        <div
+          ref={(el) => animateIn(el, { duration: 300 })}
           className="flex items-center gap-4"
         >
           <button
-            onClick={onVolver}
-            className="p-2 rounded-lg border-2 transition-all hover:bg-white/5 flex items-center gap-2 text-xs font-black uppercase tracking-wider"
+            onClick={(e) => { animateButtonPress(e.currentTarget); onVolver(); }}
+            className="p-2 rounded-lg border-2 transition-all hover:bg-white/5 flex items-center gap-2 text-xs font-black uppercase tracking-wider cursor-pointer"
             style={{
               borderColor: 'var(--radio-color, #2a160d)',
               color: 'var(--radio-color, #d4af37)',
@@ -369,7 +368,7 @@ const BodegaView = memo(({ onVolver }) => {
               Bodega
             </h2>
           </div>
-        </motion.div>
+        </div>
       </div>
 
       {/* Contenido principal */}

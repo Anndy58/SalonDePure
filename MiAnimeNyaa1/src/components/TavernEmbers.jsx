@@ -1,6 +1,6 @@
 import React, { useEffect, useState, memo } from "react";
 import Particles, { initParticlesEngine } from "@tsparticles/react";
-import { loadFull } from "tsparticles";
+import { loadSlim } from "@tsparticles/slim";
 
 const PARTICLES_OPTIONS = {
   fullScreen: { enable: true, zIndex: 0 },
@@ -19,7 +19,7 @@ export const TavernEmbers = memo(() => {
 
   useEffect(() => {
     initParticlesEngine(async (engine) => {
-      await loadFull(engine);
+      await loadSlim(engine);
     }).then(() => {
       setInit(true);
     });

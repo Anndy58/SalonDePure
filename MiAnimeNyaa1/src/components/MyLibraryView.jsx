@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useRef, useCallback } from "react";
 import { Search, Grid, List as ListIcon, Download, Sparkles, Loader2, RefreshCw, ChevronLeft, ChevronRight } from "lucide-react";
-import { motion } from "framer-motion";
+import anime from "animejs";
+import { animateIn, animateButtonPress } from "../utils/animeUtils";
 import CoverCard from "./CoverCard";
 import StatusButtons, { STATUS } from "./StatusButtons";
 

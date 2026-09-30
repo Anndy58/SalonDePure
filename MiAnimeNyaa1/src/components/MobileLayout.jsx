@@ -3,7 +3,8 @@ import {
   Grape, Terminal, Palette, Folder, Calendar, Search, Library, Download, 
   Wine, Radio, Info, Settings
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import anime from "animejs";
+import { animateIn, animateButtonPress } from "../utils/animeUtils";
 import { useNavigate, useLocation } from "react-router-dom";
 
 export default function MobileLayout({
@@ -46,10 +47,8 @@ export default function MobileLayout({
         <div className="absolute bottom-0 right-0 w-80 h-80 bg-purple-900/10 rounded-full blur-[150px] translate-x-1/3 translate-y-1/3" />
       </div>
 
-      <motion.div
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ type: "spring", stiffness: 60, damping: 15 }}
+      <div
+        ref={(el) => animateIn(el, { duration: 300 })}
         className={`relative z-20 flex justify-between items-center px-4 py-3 transition-all duration-300 ${
           scrolled ? 'bg-black/80 backdrop-blur-xl border-b border-[#d4af37]/20 shadow-lg' : 'bg-transparent'
         }`}
@@ -110,20 +109,15 @@ export default function MobileLayout({
             <Palette size={16} />
           </button>
         </div>
-      </motion.div>
+      </div>
 
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={location.pathname}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          className="flex-1 overflow-y-auto w-full custom-scrollbar relative z-10 px-3 pb-32 pt-2"
-        >
-          {children}
-        </motion.div>
-      </AnimatePresence>
+      <div
+        key={location.pathname}
+        ref={(el) => animateIn(el, { duration: 250 })}
+        className="flex-1 overflow-y-auto w-full custom-scrollbar relative z-10 px-3 pb-32 pt-2"
+      >
+        {children}
+      </div>
 
       <div className="fixed bottom-0 left-0 w-full z-50 bg-black/90 backdrop-blur-2xl border-t border-[#d4af37]/10 shadow-[0_-10px_40px_rgba(0,0,0,0.8)]">
         <div className="flex justify-around items-center px-1 py-1.5">
@@ -136,10 +130,8 @@ export default function MobileLayout({
                 className="relative flex flex-col items-center justify-center w-full py-1.5 gap-0.5 transition-all duration-200 group"
               >
                 {isActive && (
-                  <motion.div
-                    layoutId="activeTab"
+                  <div
                     className="absolute -top-[1px] left-1/2 -translate-x-1/2 w-8 h-0.5 bg-[#d4af37] rounded-full shadow-[0_0_15px_rgba(212,175,55,0.6)]"
-                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
                   />
                 )}
                 
@@ -156,13 +148,11 @@ export default function MobileLayout({
                 </span>
 
                 {item.badge !== undefined && item.badge !== null && item.badge > 0 && (
-                  <motion.span
-                    initial={{ scale: 0.8 }}
-                    animate={{ scale: 1 }}
+                  <span
                     className="absolute -top-0.5 right-1/3 bg-red-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded-full shadow-lg border border-red-700 min-w-[18px] text-center"
                   >
                     {item.badge > 99 ? '99+' : item.badge}
-                  </motion.span>
+                  </span>
                 )}
               </button>
             );

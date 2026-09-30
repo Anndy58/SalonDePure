@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, memo } from 'react';
 import { Wine, Grape, Save, Plus, ArrowLeft } from 'lucide-react';
-import { motion } from 'framer-motion';
+import anime from 'animejs';
+import { animateIn, animateButtonPress } from '../utils/animeUtils';
 
 const FRASES = [
   "El vino entra, la sabiduría sale.",
@@ -48,10 +49,8 @@ const BodegaView = memo(({ onVolver }) => {
 
       {/* Letrero de la Bodega */}
       <div className="w-full max-w-[1500px] mx-auto flex justify-center items-start px-12 pt-6 pb-2 shrink-0">
-        <motion.div 
-          initial={{ y: -30, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ type: "spring", stiffness: 60, damping: 15 }}
+        <div
+          ref={(el) => animateIn(el, { duration: 300 })}
           className="relative flex flex-col items-center z-40 select-none mb-4 mt-2 scale-90 origin-top"
         >
           <div className="absolute -top-[30px] left-[50px] w-2 h-8 border-x-4 border-[#0a0502] bg-[#1a0d06] rounded-sm shadow-[0_5px_10px_rgba(0,0,0,0.8)]"></div>
@@ -85,7 +84,7 @@ const BodegaView = memo(({ onVolver }) => {
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
 
       {/* Contenido principal */}

@@ -1,6 +1,7 @@
 import React, { memo } from 'react';
 import { X, Github, Coffee, Calendar, User, Code, Heart } from 'lucide-react';
-import { motion } from 'framer-motion';
+import anime from 'animejs';
+import { animateModalIn, animateButtonPress } from '../utils/animeUtils';
 
 const AboutView = memo(({ onClose }) => {
   // Datos del proyecto (cámbialos a tu gusto)
@@ -15,18 +16,12 @@ const AboutView = memo(({ onClose }) => {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
+    <div
       className="fixed inset-0 z-[250] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
       onClick={onClose}
     >
-      <motion.div
-        initial={{ scale: 0.9, y: 20 }}
-        animate={{ scale: 1, y: 0 }}
-        exit={{ scale: 0.9, y: 20 }}
-        transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+      <div
+        ref={(el) => animateModalIn(el)}
         className="w-full max-w-2xl max-h-[90vh] overflow-y-auto custom-scrollbar p-6 sm:p-8 rounded-2xl border-2 shadow-2xl flex flex-col gap-6"
         style={{
           backgroundColor: '#0f0805',
@@ -106,8 +101,8 @@ const AboutView = memo(({ onClose }) => {
         <p className="text-[9px] font-mono text-gray-500 text-center border-t border-amber-950/30 pt-4">
           {project.license} · {new Date().getFullYear()}
         </p>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 });
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { Loader2, Search, X, Sparkles, Star, ListFilter, RefreshCw, Eye, EyeOff, ChevronLeft, ChevronRight } from "lucide-react";
-import { motion } from 'framer-motion';
+import anime from 'animejs';
+import { animateIn, animateButtonPress } from "../utils/animeUtils";
 import CoverCard from "./CoverCard";
 import { useStore } from "../store/useStore";
 
@@ -291,9 +292,8 @@ const AnimeCatalogView = React.memo(({
 
         {/* Recomendaciones */}
         {anilistUser && recommendations.length > 0 && showRecommendations && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
+          <div
+            ref={(el) => animateIn(el, { duration: 300 })}
             className="relative mb-4 p-3 rounded-xl bg-gradient-to-r from-[#1a0d06] to-[#0d0603] border border-[var(--radio-color)]/20 shadow-[0_0_30px_var(--radio-color)_5] shrink-0"
           >
             <div className="flex items-center justify-between mb-2">
@@ -340,7 +340,7 @@ const AnimeCatalogView = React.memo(({
                 </button>
               ))}
             </div>
-          </motion.div>
+          </div>
         )}
 
         {/* Cabecera con contador */}

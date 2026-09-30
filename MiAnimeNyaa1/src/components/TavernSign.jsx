@@ -1,13 +1,12 @@
 import React, { memo } from "react";
-import { motion } from "framer-motion";
+import anime from "animejs";
+import { animateIn, animateButtonPress } from "../utils/animeUtils";
 import { Wine, Grape } from "lucide-react";
 
 export const TavernSign = memo(({ defaultColor, modoBodega, onToggleModo }) => {
   return (
-    <motion.div 
-      initial={{ y: -30, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ type: "spring", stiffness: 60, damping: 15 }}
+    <div
+      ref={(el) => animateIn(el, { duration: 350 })}
       className="relative flex flex-col items-center z-40 select-none mb-4 mt-2 scale-90 origin-top"
     >
       <div className="absolute -top-[30px] left-[50px] w-2 h-8 border-x-4 border-[#0a0502] bg-[#1a0d06] rounded-sm shadow-[0_5px_10px_rgba(0,0,0,0.8)]"></div>
@@ -58,6 +57,6 @@ export const TavernSign = memo(({ defaultColor, modoBodega, onToggleModo }) => {
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 });

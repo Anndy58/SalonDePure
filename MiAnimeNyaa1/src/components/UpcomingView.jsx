@@ -1,6 +1,7 @@
 // src/components/UpcomingView.jsx
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { motion } from 'framer-motion';
+import anime from 'animejs';
+import { animateIn, animateButtonPress } from '../utils/animeUtils';
 import { Calendar, ExternalLink, Loader2, Sparkles, Newspaper, AlertCircle, LayoutGrid, List } from 'lucide-react';
 
 // ─── MODOS DE VISUALIZACIÓN PARA ESTRENOS ──────────────────────────
@@ -225,16 +226,14 @@ const UpcomingView = ({ onOpenAnime, library, colors }) => {
                       const isSoon = daysUntil !== null && daysUntil <= 30 && daysUntil >= 0;
 
                       return (
-                        <motion.div
+                        <div
                           key={anime.id || idx}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: idx * 0.02 }}
+                          ref={(el) => animateIn(el, { duration: 250, delay: idx * 20 })}
                           className={`group p-3 rounded-xl border bg-black/40 hover:bg-black/60 transition-all cursor-pointer hover:border-[var(--radio-color)] ${
                             releaseViewMode === 'list' ? 'flex gap-3' : ''
                           } ${isSoon ? 'border-yellow-800/50 bg-yellow-950/10' : ''}`}
                           style={{ borderColor: 'var(--radio-color, #2a160d)' }}
-                          onClick={() => onOpenAnime(anime)}
+                          onClick={(e) => { animateButtonPress(e.currentTarget); onOpenAnime(anime); }}
                         >
                           {anime.image && (
                             <div className={`flex-shrink-0 rounded-lg overflow-hidden bg-black/60 ${
@@ -273,7 +272,7 @@ const UpcomingView = ({ onOpenAnime, library, colors }) => {
                               </span>
                             )}
                           </div>
-                        </motion.div>
+                        </div>
                       );
                     })}
                   </div>
@@ -351,14 +350,12 @@ const UpcomingView = ({ onOpenAnime, library, colors }) => {
             ) : (
               <div className={getGridClass(newsViewMode, news.length)}>
                 {news.map((item, idx) => (
-                  <motion.a
+                  <a
                     key={`${item.id}-${idx}`}
+                    ref={(el) => animateIn(el, { duration: 250, delay: idx * 25 })}
                     href={item.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: idx * 0.03 }}
                     className={`group p-3 rounded-xl border bg-black/40 hover:bg-black/60 transition-all hover:border-[var(--radio-color)] ${
                       newsViewMode === 'list' ? 'flex gap-3' : ''
                     }`}
@@ -394,7 +391,7 @@ const UpcomingView = ({ onOpenAnime, library, colors }) => {
                         )}
                       </div>
                     </div>
-                  </motion.a>
+                  </a>
                 ))}
               </div>
             )}

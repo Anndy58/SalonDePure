@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef, lazy, Suspense, Profiler } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import anime from 'animejs';
+import { animateIn, animateModalIn, animateButtonPress, useAnimeIn, useAnimeModal } from "./utils/animeUtils";
 import { Routes, Route, Navigate, useNavigate, useLocation } from "react-router-dom";
 import { 
   Palette, Folder, Download, Search, Terminal, X, Wine, Grape, QrCode, Info, User, Settings, MoreVertical,
@@ -260,9 +261,7 @@ const renderRoutes = () => (
         
         <AboutModal isOpen={showAbout} onClose={toggleAbout} />
 
-        <AnimatePresence>
-          {showTerminal && <LiveTerminalModal onClose={() => setShowTerminal(false)} />}
-        </AnimatePresence>
+        {showTerminal && <LiveTerminalModal onClose={() => setShowTerminal(false)} />}
 
         {!isMobile ? (
           <div className="flex flex-col w-full h-screen overflow-hidden relative z-20">
@@ -296,72 +295,69 @@ const renderRoutes = () => (
                     </button>
                   )}
 
-                  <AnimatePresence>
-                    {showAnilistMenu && anilistUser && (
-                      <>
-                        <div className="fixed inset-0 z-40" onClick={() => setShowAnilistMenu(false)}></div>
-                        <motion.div
-                          initial={{ opacity: 0, y: 8, scale: 0.95 }}
-                          animate={{ opacity: 1, y: 0, scale: 1 }}
-                          exit={{ opacity: 0, y: 8, scale: 0.95 }}
-                          transition={{ duration: 0.15 }}
-                          className="absolute right-0 top-full mt-2 w-64 bg-[#1a0d06]/95 backdrop-blur-md border border-[#3d2114] rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.9)] z-50 overflow-hidden"
-                        >
-                          <div className="p-3 border-b border-[#3d2114]/60 bg-[#0a0502]/40 flex items-center gap-3">
-                            {anilistUser.avatar?.large ? (
-                              <img src={anilistUser.avatar.large} alt={anilistUser.name} className="w-10 h-10 rounded-full object-cover ring-2 ring-[#d4af37]/60" />
-                            ) : (
-                              <div className="w-10 h-10 rounded-full bg-[#1a0d06] flex items-center justify-center text-[#d4af37] border border-[#3d2114]">
-                                <User size={20} />
-                              </div>
-                            )}
-                            <div className="flex flex-col min-w-0">
-                              <span className="text-sm font-bold text-[#f5efe6] truncate">{anilistUser.name}</span>
-                              <span className="text-[10px] text-[#d4af37] uppercase tracking-wider font-mono">Conectado con AniList</span>
+                  {showAnilistMenu && anilistUser && (
+                    <>
+                      <div className="fixed inset-0 z-40" onClick={() => setShowAnilistMenu(false)}></div>
+                      <div
+                        ref={(el) => animateModalIn(el, { duration: 300 })}
+                        className="absolute right-0 top-full mt-2 w-64 bg-[#1a0d06]/95 backdrop-blur-md border border-[#3d2114] rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.9)] z-50 overflow-hidden"
+                      >
+                        <div className="p-3 border-b border-[#3d2114]/60 bg-[#0a0502]/40 flex items-center gap-3">
+                          {anilistUser.avatar?.large ? (
+                            <img src={anilistUser.avatar.large} alt={anilistUser.name} className="w-10 h-10 rounded-full object-cover ring-2 ring-[#d4af37]/60" />
+                          ) : (
+                            <div className="w-10 h-10 rounded-full bg-[#1a0d06] flex items-center justify-center text-[#d4af37] border border-[#3d2114]">
+                              <User size={20} />
                             </div>
+                          )}
+                          <div className="flex flex-col min-w-0">
+                            <span className="text-sm font-bold text-[#f5efe6] truncate">{anilistUser.name}</span>
+                            <span className="text-[10px] text-[#d4af37] uppercase tracking-wider font-mono">Conectado con AniList</span>
                           </div>
+                        </div>
 
-                          <div className="p-1.5 flex flex-col gap-1">
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setShowAnilistMenu(false);
-                                syncWithAnilist(libraryRef, watchedRef, guardarEnServidor, setLibrary);
-                              }}
+                        <div className="p-1.5 flex flex-col gap-1">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              animateButtonPress(e.currentTarget);
+                              setShowAnilistMenu(false);
+                              syncWithAnilist(libraryRef, watchedRef, guardarEnServidor, setLibrary);
+                            }}
+                            className="flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold text-[#a89f91] hover:text-[#d4af37] hover:bg-[#3d2114]/40 transition-colors w-full text-left cursor-pointer"
+                          >
+                            <RefreshCw size={14} className="text-[#d4af37]" /> Sincronizar Biblioteca
+                          </button>
+
+                          {anilistUser.siteUrl && (
+                            <a
+                              href={anilistUser.siteUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={() => setShowAnilistMenu(false)}
                               className="flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold text-[#a89f91] hover:text-[#d4af37] hover:bg-[#3d2114]/40 transition-colors w-full text-left"
                             >
-                              <RefreshCw size={14} className="text-[#d4af37]" /> Sincronizar Biblioteca
-                            </button>
+                              <ExternalLink size={14} className="text-[#a89f91]" /> Ver perfil en AniList.co
+                            </a>
+                          )}
 
-                            {anilistUser.siteUrl && (
-                              <a
-                                href={anilistUser.siteUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                onClick={() => setShowAnilistMenu(false)}
-                                className="flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold text-[#a89f91] hover:text-[#d4af37] hover:bg-[#3d2114]/40 transition-colors w-full text-left"
-                              >
-                                <ExternalLink size={14} className="text-[#a89f91]" /> Ver perfil en AniList.co
-                              </a>
-                            )}
+                          <div className="h-px bg-[#3d2114]/60 my-0.5"></div>
 
-                            <div className="h-px bg-[#3d2114]/60 my-0.5"></div>
-
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setShowAnilistMenu(false);
-                                logoutAnilist();
-                              }}
-                              className="flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-bold text-red-400/90 hover:text-red-300 hover:bg-red-950/40 transition-colors w-full text-left"
-                            >
-                              <LogOut size={14} /> Cerrar Sesión
-                            </button>
-                          </div>
-                        </motion.div>
-                      </>
-                    )}
-                  </AnimatePresence>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              animateButtonPress(e.currentTarget);
+                              setShowAnilistMenu(false);
+                              logoutAnilist();
+                            }}
+                            className="flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-bold text-red-400/90 hover:text-red-300 hover:bg-red-950/40 transition-colors w-full text-left cursor-pointer"
+                          >
+                            <LogOut size={14} /> Cerrar Sesión
+                          </button>
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
 
                 <div className="w-px h-6 bg-[#3d2114] mx-1"></div>
@@ -376,41 +372,36 @@ const renderRoutes = () => (
                     <MoreVertical size={16} />
                   </button>
 
-                  <AnimatePresence>
-                    {showDropdown && (
-                      <>
-                        <div className="fixed inset-0 z-40" onClick={() => setShowDropdown(false)}></div>
-                        <motion.div
-                          initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                          animate={{ opacity: 1, y: 0, scale: 1 }}
-                          exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                          transition={{ duration: 0.15 }}
-                          className="absolute right-0 top-full mt-2 w-56 bg-[#1a0d06]/95 backdrop-blur-md border border-[#3d2114] rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.8)] z-50 overflow-hidden"
-                        >
-                          <div className="p-1 flex flex-col">
-                            <button onClick={() => { abrirCarpetaAnimes(); setShowDropdown(false); }} className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[#a89f91] hover:text-[#d4af37] hover:bg-[#3d2114]/30 transition-colors w-full text-left">
-                              <Folder size={16} /> Abrir Carpeta Local
-                            </button>
-                            <button onClick={() => { setShowTerminal(true); setShowDropdown(false); }} className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[#a89f91] hover:text-[#d4af37] hover:bg-[#3d2114]/30 transition-colors w-full text-left">
-                              <Terminal size={16} /> Terminal
-                            </button>
-                            <button onClick={() => { setShowCustomizer(true); setShowDropdown(false); }} className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[#a89f91] hover:text-[#d4af37] hover:bg-[#3d2114]/30 transition-colors w-full text-left">
-                              <Palette size={16} /> Personalizar Colores
-                            </button>
-                            <button onClick={() => { handleQR(); setShowDropdown(false); }} className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[#a89f91] hover:text-[#d4af37] hover:bg-[#3d2114]/30 transition-colors w-full text-left">
-                              <QrCode size={16} /> Código QR
-                            </button>
+                  {showDropdown && (
+                    <>
+                      <div className="fixed inset-0 z-40" onClick={() => setShowDropdown(false)}></div>
+                      <div
+                        ref={(el) => animateModalIn(el, { duration: 250 })}
+                        className="absolute right-0 top-full mt-2 w-56 bg-[#1a0d06]/95 backdrop-blur-md border border-[#3d2114] rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.8)] z-50 overflow-hidden"
+                      >
+                        <div className="p-1 flex flex-col">
+                          <button onClick={(e) => { animateButtonPress(e.currentTarget); abrirCarpetaAnimes(); setShowDropdown(false); }} className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[#a89f91] hover:text-[#d4af37] hover:bg-[#3d2114]/30 transition-colors w-full text-left cursor-pointer">
+                            <Folder size={16} /> Abrir Carpeta Local
+                          </button>
+                          <button onClick={(e) => { animateButtonPress(e.currentTarget); setShowTerminal(true); setShowDropdown(false); }} className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[#a89f91] hover:text-[#d4af37] hover:bg-[#3d2114]/30 transition-colors w-full text-left cursor-pointer">
+                            <Terminal size={16} /> Terminal
+                          </button>
+                          <button onClick={(e) => { animateButtonPress(e.currentTarget); setShowCustomizer(true); setShowDropdown(false); }} className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[#a89f91] hover:text-[#d4af37] hover:bg-[#3d2114]/30 transition-colors w-full text-left cursor-pointer">
+                            <Palette size={16} /> Personalizar Colores
+                          </button>
+                          <button onClick={(e) => { animateButtonPress(e.currentTarget); handleQR(); setShowDropdown(false); }} className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[#a89f91] hover:text-[#d4af37] hover:bg-[#3d2114]/30 transition-colors w-full text-left cursor-pointer">
+                            <QrCode size={16} /> Código QR
+                          </button>
 
-                            <div className="h-px bg-[#3d2114]/50 my-1"></div>
+                          <div className="h-px bg-[#3d2114]/50 my-1"></div>
 
-                            <button onClick={() => { toggleAbout(); setShowDropdown(false); }} className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[#a89f91] hover:text-[#d4af37] hover:bg-[#3d2114]/30 transition-colors w-full text-left">
-                              <Info size={16} /> Acerca de
-                            </button>
-                          </div>
-                        </motion.div>
-                      </>
-                    )}
-                  </AnimatePresence>
+                          <button onClick={(e) => { animateButtonPress(e.currentTarget); toggleAbout(); setShowDropdown(false); }} className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[#a89f91] hover:text-[#d4af37] hover:bg-[#3d2114]/30 transition-colors w-full text-left cursor-pointer">
+                            <Info size={16} /> Acerca de
+                          </button>
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -441,10 +432,11 @@ const renderRoutes = () => (
                         </span>
                       )}
                       {isActive && (
-                        <motion.div
-                          layoutId="activeTabIndicator"
+                        <div
+                          ref={(el) => {
+                            if (el) anime({ targets: el, width: ['0%', '100%'], duration: 300, easing: 'easeOutQuad' });
+                          }}
                           className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#d4af37] rounded-full shadow-[0_0_15px_rgba(212,175,55,0.6)]"
-                          transition={{ type: "spring", stiffness: 500, damping: 30 }}
                         />
                       )}
                     </button>
@@ -458,18 +450,13 @@ const renderRoutes = () => (
               >
                 <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
                 <div className="relative z-10 w-full h-full min-w-0">
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={location.pathname}
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -8 }}
-                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                      className="w-full h-full"
-                    >
-                      {renderRoutes()}
-                    </motion.div>
-                  </AnimatePresence>
+                  <div
+                    key={location.pathname}
+                    ref={(el) => { if (el) animateIn(el, { duration: 350 }); }}
+                    className="w-full h-full"
+                  >
+                    {renderRoutes()}
+                  </div>
                 </div>
               </div>
             </div>
@@ -495,71 +482,64 @@ const renderRoutes = () => (
           </>
         )}
 
-        <AnimatePresence>
-          {showQRModal && !isMobile && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
-              onClick={() => setShowQRModal(false)}
+        {showQRModal && !isMobile && (
+          <div
+            className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+            onClick={() => setShowQRModal(false)}
+          >
+            <div
+              ref={(el) => animateModalIn(el)}
+              className="w-full max-w-md p-8 rounded-2xl border-2 bg-[#120a06] shadow-[0_30px_80px_rgba(0,0,0,1)] text-center"
+              style={{ borderColor: 'var(--radio-color, #d4af37)' }}
+              onClick={(e) => e.stopPropagation()}
             >
-              <motion.div
-                initial={{ scale: 0.9, y: 20 }}
-                animate={{ scale: 1, y: 0 }}
-                exit={{ scale: 0.9, y: 20 }}
-                transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                className="w-full max-w-md p-8 rounded-2xl border-2 bg-[#120a06] shadow-[0_30px_80px_rgba(0,0,0,1)] text-center"
-                style={{ borderColor: 'var(--radio-color, #d4af37)' }}
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-lg font-black uppercase tracking-widest text-[#d4af37]" style={{ fontFamily: '"Tilt Neon", sans-serif' }}>
-                    📱 ESCANEA CON TU MÓVIL
-                  </h3>
-                  <button 
-                    type="button"
-                    onClick={() => setShowQRModal(false)} 
-                    className="text-gray-400 hover:text-white transition-colors p-2"
-                  >
-                    <X size={24} />
-                  </button>
-                </div>
-                
-                <div className="bg-white p-4 rounded-xl inline-block mx-auto shadow-lg">
-                  <QRCode 
-                    value={getQRUrl()} 
-                    size={256} 
-                    bgColor="#ffffff" 
-                    fgColor="#000000" 
-                    level="H" 
-                    includeMargin={true}
-                  />
-                </div>
-                
-                <p className="text-xs text-gray-400 mt-4 font-mono break-all">
-                  URL: {getQRUrl()}
-                </p>
-                
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-lg font-black uppercase tracking-widest text-[#d4af37]" style={{ fontFamily: '"Tilt Neon", sans-serif' }}>
+                  📱 ESCANEA CON TU MÓVIL
+                </h3>
                 <button 
                   type="button"
-                  onClick={() => {
-                    navigator.clipboard.writeText(getQRUrl());
-                    alert('✅ URL copiada al portapapeles');
-                  }}
-                  className="mt-4 px-6 py-2 rounded-lg border-2 text-xs font-black uppercase tracking-wider transition-all hover:bg-[#d4af37] hover:text-black"
-                  style={{ borderColor: 'var(--radio-color, #d4af37)', color: 'var(--radio-color, #d4af37)' }}
+                  onClick={(e) => { animateButtonPress(e.currentTarget); setShowQRModal(false); }}
+                  className="text-gray-400 hover:text-white transition-colors p-2 cursor-pointer"
                 >
-                  Copiar URL
+                  <X size={24} />
                 </button>
-                
-                <p className="text-[10px] text-gray-500 mt-4">
-                  Escanea el código QR desde la cámara de tu móvil para abrir la aplicación
-                </p>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+              </div>
+
+              <div className="bg-white p-4 rounded-xl inline-block mx-auto shadow-lg">
+                <QRCode
+                  value={getQRUrl()}
+                  size={256}
+                  bgColor="#ffffff"
+                  fgColor="#000000"
+                  level="H"
+                  includeMargin={true}
+                />
+              </div>
+
+              <p className="text-xs text-gray-400 mt-4 font-mono break-all">
+                URL: {getQRUrl()}
+              </p>
+
+              <button
+                type="button"
+                onClick={(e) => {
+                  animateButtonPress(e.currentTarget);
+                  navigator.clipboard.writeText(getQRUrl());
+                  alert('✅ URL copiada al portapapeles');
+                }}
+                className="mt-4 px-6 py-2 rounded-lg border-2 text-xs font-black uppercase tracking-wider transition-all hover:bg-[#d4af37] hover:text-black cursor-pointer"
+                style={{ borderColor: 'var(--radio-color, #d4af37)', color: 'var(--radio-color, #d4af37)' }}
+              >
+                Copiar URL
+              </button>
+
+              <p className="text-[10px] text-gray-500 mt-4">
+                Escanea el código QR desde la cámara de tu móvil para abrir la aplicación
+              </p>
+            </div>
+          </div>
+        )}
       </div>
       </Profiler>
     </ErrorBoundary>

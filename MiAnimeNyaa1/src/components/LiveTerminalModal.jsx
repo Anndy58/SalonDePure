@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, memo } from "react";
-import { motion } from "framer-motion";
+import anime from "animejs";
+import { animateModalIn, animateButtonPress } from "../utils/animeUtils";
 import { X, Terminal } from "lucide-react";
 
 export const LiveTerminalModal = memo(({ onClose }) => {
@@ -30,17 +31,13 @@ export const LiveTerminalModal = memo(({ onClose }) => {
   }, [logs]);
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
+    <div
       className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm"
+      onClick={onClose}
     >
-      <motion.div
-        initial={{ scale: 0.9, y: 20 }}
-        animate={{ scale: 1, y: 0 }}
-        exit={{ scale: 0.9, y: 20 }}
-        transition={{ type: "spring", stiffness: 300, damping: 25 }}
+      <div
+        ref={(el) => animateModalIn(el)}
+        onClick={(e) => e.stopPropagation()}
         className="w-full max-w-4xl h-[70vh] flex flex-col bg-[#0a0502] border-2 rounded-sm overflow-hidden shadow-[0_30px_80px_rgba(0,0,0,1)]"
         style={{ borderColor: 'var(--radio-color, #2a160d)' }}
       >
@@ -50,8 +47,8 @@ export const LiveTerminalModal = memo(({ onClose }) => {
           </span>
           <button 
             type="button"
-            onClick={onClose} 
-            className="text-[#a89f91] hover:text-[#d4af37] transition-colors p-1 bg-[#1a0d06] border border-[#2a160d] rounded shadow-inner"
+            onClick={(e) => { animateButtonPress(e.currentTarget); onClose(); }}
+            className="text-[#a89f91] hover:text-[#d4af37] transition-colors p-1 bg-[#1a0d06] border border-[#2a160d] rounded shadow-inner cursor-pointer"
           >
             <X size={18}/>
           </button>
@@ -66,7 +63,7 @@ export const LiveTerminalModal = memo(({ onClose }) => {
           })}
           <div ref={bottomRef} />
         </div>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 });

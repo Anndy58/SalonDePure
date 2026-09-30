@@ -12,7 +12,6 @@ import Parser from 'rss-parser';
 import * as cheerio from 'cheerio';
 import puppeteer from 'puppeteer';
 import PQueue from 'p-queue';
-import randomUseragent from 'random-useragent';
 import anitomy from 'anitomy-js';
 
 const parser = new Parser();
@@ -488,9 +487,6 @@ function calculateTorrentOffsetForAnime(anime, rawResults) {
     offsetSeconds: medianOffset
   };
 }
-
-// Máximo 1 petición simultánea a Nyaa, dejando 1.5s entre peticiones para prevenir baneos de IP
-const nyaaQueue = new SimpleQueue(1, 1500);
 
 // ============================================================================
 // 🔍 1. BUSCADOR ANILIST

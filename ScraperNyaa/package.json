@@ -10,15 +10,7 @@
     "test": "NODE_ENV=test node --test tests/*.test.js",
     "test:cli": "node scripts/testScraper.js",
     "test:benchmark": "node scripts/benchmarkScraper.js",
-    "build:exe": "node scripts/buildExe.js",
-    "build:pkg": "pkg . --targets node18-win-x64 --out-path dist",
-    "build:all": "pkg . --targets node18-win-x64,node18-linux-x64 --out-path dist"
-  },
-  "pkg": {
-    "assets": [
-      "public/**/*"
-    ],
-    "outputPath": "dist"
+    "build:exe": "node scripts/buildExe.js"
   },
   "keywords": [
     "nyaa",
@@ -35,8 +27,5 @@
     "express": "^4.21.2",
     "lru-cache": "^11.5.3",
     "p-limit": "^7.3.3"
-  },
-  "devDependencies": {
-    "@yao-pkg/pkg": "^6.22.0"
   }
 }
