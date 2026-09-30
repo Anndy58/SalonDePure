@@ -547,7 +547,6 @@ export async function scrapeSearchWithDetails(options = {}) {
       emitLog(onLog, 'INFO', `⚡ [Modo Shallow] Omitiendo deep scraping de fichas para máxima velocidad.`);
       let shallowBatch = candidateListings.map((item) => ({
         ...item,
-        descriptionText: item.title,
         deepScraped: false
       }));
 
@@ -565,10 +564,9 @@ export async function scrapeSearchWithDetails(options = {}) {
           const url = `${NYAA_BASE_URL}/view/${item.id}`;
           const html = await fetchHtml(url, useCache, 2, 500, onLog);
           const details = parseViewDetailsHtml(html, item.id);
-          emitLog(onLog, 'SCRAPE', `📄 [Deep Scrape OK] #${item.id} "${item.title.substring(0, 45)}..." -> Desc de ${details.descriptionText.length} caracteres extraída y limpia.`);
+            emitLog(onLog, 'SCRAPE', `📄 [Deep Scrape OK] #${item.id} "${item.title.substring(0, 45)}..." -> Subtítulos analizados. Descartando texto de descripción.`);
           return {
             ...item,
-            descriptionText: details.descriptionText,
             files: details.files,
             deepScraped: true,
             metadata: {
@@ -585,7 +583,7 @@ export async function scrapeSearchWithDetails(options = {}) {
             return null;
           }
           emitLog(onLog, 'WARN', `⚠️ Fallo en deep scrape de ID #${item.id}: ${err.message}. Se usará datos básicos del listado.`);
-          return { ...item, descriptionText: item.title, deepScraped: false };
+            return { ...item, deepScraped: false };
         }
       };
 

@@ -1082,8 +1082,7 @@ app.get('/api/enrich', async (req, res) => {
     isMulti,
     isSubEsp,
     fansub: fansub || 'Desconocido',
-    quality: quality || '1080P',
-    descriptionText: ''
+    quality: quality || '1080P'
   };
 
   enrichCache.set(episodeCacheKey, responsePayload);
@@ -1209,7 +1208,6 @@ app.get('/api/torrents/:query', async (req, res) => {
         rawSize: i.size,
         seeders: i.seeders || 0,
         leechers: i.leechers || 0,
-        description: desc,
         images: images,
         parsed: parseTorrentData(i.title, desc),
         infoUrl: i.infoUrl || i.guid || null,
