@@ -315,12 +315,14 @@ const GeometricBlurEngine = memo(({ settings }) => {
         .gpu-layer {
           position: absolute;
           will-change: transform;
-          mix-blend-mode: screen;
+          transform: translateZ(0);
+          contain: strict;
         }
         .blur-target {
           width: 100%;
           height: 100%;
-          will-change: transform, filter;
+          will-change: transform;
+          transform: translateZ(0);
         }
       `}</style>
       {shapes.map((s) => (

@@ -11,7 +11,9 @@ const GLOBAL_STYLES = `
     border-radius: 8px;
     background: #0f0805;
     box-shadow: 0 5px 15px rgba(0,0,0,0.8);
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    will-change: transform;
+    transform: translateZ(0);
   }
   .magic-board .group:hover {
     transform: translateY(-8px) scale(1.02);

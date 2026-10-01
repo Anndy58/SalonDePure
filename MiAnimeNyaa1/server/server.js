@@ -1100,6 +1100,14 @@ app.get('/api/torrents/details', async (req, res) => {
 
 app.get('/api/torrents/:query', async (req, res) => {
   const query = decodeURIComponent(req.params.query);
+  const cacheKey = `prowlarr_${query.toLowerCase().trim()}`;
+
+  // Revisa la caché de velocidad ultrarrápida antes de ir a red
+  const cachedResponse = searchCache.get(cacheKey);
+  if (cachedResponse) {
+    return res.json(cachedResponse);
+  }
+
   try {
     const response = await axios.get(`${getConfig("PROWLARR_URL")}/api/v1/search`, {
       params: { apikey: getConfig("PROWLARR_API_KEY"), query, limit: 1000 },
@@ -1275,12 +1283,17 @@ app.get('/api/torrents/:query', async (req, res) => {
       }
     }
 
-    res.json({
+    const finalPayload = {
       results: rawResults,
       scheduleUpdated: meta.scheduleUpdated,
       newDay: meta.newDay,
       previousDay: meta.previousDay
-    });
+    };
+
+    // Guardar en caché de búsquedas para respuestas instantáneas
+    searchCache.set(cacheKey, finalPayload, 5 * 60 * 1000);
+
+    res.json(finalPayload);
   } catch (error) {
     console.error('Error en torrents:', error.message);
     res.status(500).json({ error: 'Error torrents' });

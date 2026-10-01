@@ -1,5 +1,6 @@
 import React, { memo } from "react";
 import { BookmarkPlus, Eye, Check, Pause, X as XIcon, Trash2 } from "lucide-react";
+import { animateButtonPress } from "../utils/animeUtils";
 
 export const STATUS = { 
   quiero_ver: { label: "Quiero ver", icon: BookmarkPlus }, 
@@ -34,6 +35,7 @@ const StatusButtons = memo(({ anime, currentStatus, onSet, onRemove, colors, isL
                 onClick={(e) => { 
                   e.preventDefault();
                   e.stopPropagation(); 
+                  animateButtonPress(e.currentTarget);
                   onSet(anime, key); 
                 }} 
                 className="flex-1 py-2 rounded-lg border transition-all cursor-pointer relative overflow-hidden flex items-center justify-center gap-1.5 text-xs font-bold uppercase"
@@ -61,6 +63,7 @@ const StatusButtons = memo(({ anime, currentStatus, onSet, onRemove, colors, isL
             onClick={(e) => { 
               e.preventDefault();
               e.stopPropagation(); 
+              animateButtonPress(e.currentTarget);
               onRemove(anime.title); 
             }} 
             className="w-full py-2 text-red-500 border border-red-950/40 rounded-lg transition-all hover:bg-red-950/20 bg-black/40 hover:text-red-400 cursor-pointer text-xs font-mono uppercase tracking-wider flex items-center justify-center gap-1"
@@ -86,6 +89,7 @@ const StatusButtons = memo(({ anime, currentStatus, onSet, onRemove, colors, isL
               onClick={(e) => { 
                 e.preventDefault();
                 e.stopPropagation(); 
+                animateButtonPress(e.currentTarget);
                 onSet(anime, key); 
               }} 
               className="py-2.5 rounded-lg border transition-all cursor-pointer flex items-center justify-center text-xs font-bold uppercase"
@@ -112,6 +116,7 @@ const StatusButtons = memo(({ anime, currentStatus, onSet, onRemove, colors, isL
           onClick={(e) => { 
             e.preventDefault();
             e.stopPropagation(); 
+            animateButtonPress(e.currentTarget);
             onRemove(anime.title); 
           }} 
           className="w-full py-2.5 text-red-500 border border-red-950/40 rounded-lg transition-all hover:bg-red-950/20 bg-black/40 hover:text-red-400 cursor-pointer text-xs font-mono uppercase tracking-wider flex items-center justify-center gap-1.5"
