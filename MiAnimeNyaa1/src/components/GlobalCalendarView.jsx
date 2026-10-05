@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Loader2, Calendar as CalIcon, ChevronLeft, ChevronRight, Zap } from "lucide-react";
+import { Loader2, Calendar as CalIcon, ChevronLeft, ChevronRight } from "lucide-react";
 import anime from "animejs";
-import { animateIn, animateModalIn, animateButtonPress } from "../utils/animeUtils";
+import { animateIn, animateButtonPress } from "../utils/animeUtils";
 import CoverCard from "./CoverCard";
 import StatusButtons from "./StatusButtons";
 
@@ -25,8 +25,6 @@ export default function GlobalCalendarView({ onOpenAnime, library, onSet, onRemo
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState(null);
   const [statusFilter, setStatusFilter] = useState("Todos");
-  const [calibrating, setCalibrating] = useState(false);
-  const [calibProgress, setCalibProgress] = useState(null);
   const [slideDirection, setSlideDirection] = useState(1); // 1 = derecha, -1 = izquierda
 
   const ORDEN_DIAS = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
@@ -72,11 +70,11 @@ export default function GlobalCalendarView({ onOpenAnime, library, onSet, onRemo
               const month = parseInt(parts[1], 10);
               const year = parseInt(parts[2], 10);
               if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
-                itemTimestamp = Math.floor(Date.UTC(year, month - 1, day) / 1000) - (9 * 3600);
+                itemTimestamp = Math.floor(new Date(year, month - 1, day).getTime() / 1000);
               }
             }
           } else if (typeof item.startDate === 'object' && item.startDate.year) {
-            itemTimestamp = Math.floor(Date.UTC(item.startDate.year, item.startDate.month - 1, item.startDate.day) / 1000) - (9 * 3600);
+            itemTimestamp = Math.floor(new Date(item.startDate.year, item.startDate.month - 1, item.startDate.day).getTime() / 1000);
           }
         }
 
@@ -128,61 +126,8 @@ export default function GlobalCalendarView({ onOpenAnime, library, onSet, onRemo
       });
   };
 
-  const iniciarCalibracionTandas = () => {
-    fetch(`/api/schedule/calibrate-all`, { method: 'POST' })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          setCalibrating(true);
-        } else if (data.message) {
-          alert(data.message);
-        }
-      })
-      .catch(() => alert("Error iniciando la calibración."));
-  };
-
-  useEffect(() => {
-    let interval = null;
-    if (calibrating) {
-      interval = setInterval(() => {
-        fetch(`/api/schedule/calibration-status`)
-          .then(res => res.json())
-          .then(status => {
-            setCalibProgress(status);
-            if (status.finished || !status.running) {
-              setCalibrating(false);
-              fetchSchedule(true);
-            }
-          })
-          .catch(() => {});
-      }, 1000);
-    }
-    return () => { if (interval) clearInterval(interval); };
-  }, [calibrating]);
-
   useEffect(() => {
     fetchSchedule(false);
-
-    const LAST_CALIB_KEY = "taberna_last_auto_calibration";
-    const lastCalibTime = localStorage.getItem(LAST_CALIB_KEY);
-    const now = Date.now();
-    const TWO_HOURS_MS = 2 * 60 * 60 * 1000;
-
-    if (!lastCalibTime || (now - parseInt(lastCalibTime, 10)) > TWO_HOURS_MS) {
-      localStorage.setItem(LAST_CALIB_KEY, String(now));
-      setTimeout(() => {
-        iniciarCalibracionTandas();
-      }, 3000);
-    }
-
-    const handleScheduleUpdated = () => {
-      fetchSchedule(true);
-    };
-
-    window.addEventListener('taberna:schedule-updated', handleScheduleUpdated);
-    return () => {
-      window.removeEventListener('taberna:schedule-updated', handleScheduleUpdated);
-    };
   }, []);
 
   if (loading) {
@@ -295,20 +240,6 @@ export default function GlobalCalendarView({ onOpenAnime, library, onSet, onRemo
 
         <div className="w-px h-6 mx-1 bg-gray-700/50 flex-shrink-0"></div>
 
-        <button
-          onClick={(e) => { animateButtonPress(e.currentTarget); iniciarCalibracionTandas(); }}
-          disabled={calibrating}
-          className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all border cursor-pointer shrink-0 hover:brightness-125"
-          style={{
-            backgroundColor: 'var(--radio-color, #d4af37)20',
-            color: 'var(--radio-color, #d4af37)',
-            borderColor: 'var(--radio-color, #2a160d)'
-          }}
-          title="Calibrar días del calendario por tandas de torrents"
-        >
-          {calibrating ? <Loader2 size={14} className="animate-spin" /> : <Zap size={14} />}
-          <span>{calibrating ? 'Calibrando...' : '⚡ Calibrar Torrents'}</span>
-        </button>
       </div>
 
       {/* FILTROS DE ESTADO ANIMADOS */}
@@ -377,6 +308,17 @@ export default function GlobalCalendarView({ onOpenAnime, library, onSet, onRemo
                 return (
                   <div
                     key={a.id || a.title || index}
+                    ref={(el) => {
+                      if (el && index < 9) {
+                        animateIn(el, {
+                          duration: 460,
+                          delay: index * 38,
+                          translateY: [26, 0],
+                          scale: [0.94, 1],
+                          easing: 'easeOutCubic'
+                        });
+                      }
+                    }}
                     className="flex flex-col relative group"
                   >
                     <CoverCard
@@ -405,35 +347,6 @@ export default function GlobalCalendarView({ onOpenAnime, library, onSet, onRemo
         </div>
       </div>
 
-      {/* MODAL DE PROGRESO DE CALIBRACIÓN */}
-      {calibProgress && calibProgress.running && (
-        <div
-          ref={(el) => animateModalIn(el, { duration: 250 })}
-          className="fixed bottom-28 right-6 z-50 bg-black/85 border-2 rounded-2xl p-4 shadow-[0_10px_40px_rgba(0,0,0,0.8)] backdrop-blur-2xl max-w-sm w-full font-mono text-xs flex flex-col gap-2.5 overflow-hidden"
-          style={{ borderColor: 'var(--radio-color, #d4af37)', boxShadow: '0 0 25px var(--radio-color, #d4af37)30' }}
-        >
-          <div className="flex justify-between items-center text-white font-bold">
-            <span className="flex items-center gap-2" style={{ color: 'var(--radio-color, #d4af37)' }}>
-              <Zap size={16} className="animate-pulse" /> Calibrando Torrents...
-            </span>
-            <span className="text-[11px] font-black bg-white/10 px-2 py-0.5 rounded-md border border-white/10">
-              {calibProgress.current} / {calibProgress.total}
-            </span>
-          </div>
-          <div className="text-[10px] text-gray-400 truncate">
-            Analizando: <span className="text-gray-100 font-bold">{calibProgress.currentAnime}</span>
-          </div>
-          <div className="w-full bg-gray-900 rounded-full h-2 overflow-hidden border border-white/10 p-0.5">
-            <div
-              className="h-full rounded-full transition-all duration-300 shadow-[0_0_12px_var(--radio-color,#d4af37)]"
-              style={{
-                width: `${(calibProgress.current / (calibProgress.total || 1)) * 100}%`,
-                backgroundColor: 'var(--radio-color, #d4af37)'
-              }}
-            />
-          </div>
-        </div>
-      )}
     </div>
   );
 }

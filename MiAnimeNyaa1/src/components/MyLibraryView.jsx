@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useRef, useCallback } from "react";
 import { Search, Grid, List as ListIcon, Download, Sparkles, Loader2, RefreshCw, ChevronLeft, ChevronRight } from "lucide-react";
 import anime from "animejs";
-import { animateIn, animateButtonPress } from "../utils/animeUtils";
+import { animateIn } from "../utils/animeUtils";
 import CoverCard from "./CoverCard";
 import StatusButtons, { STATUS } from "./StatusButtons";
 
@@ -437,7 +437,21 @@ const MyLibraryView = React.memo(({
                 {paginatedLibrary.map((a, index) => {
                   const epWatchedCount = watched[a.title]?.length || 0;
                   return (
-                    <div key={a.title || index} className="pb-2">
+                    <div
+                      key={a.title || index}
+                      ref={(el) => {
+                        if (el && index < 9) {
+                          animateIn(el, {
+                            duration: 460,
+                            delay: index * 38,
+                            translateY: [26, 0],
+                            scale: [0.94, 1],
+                            easing: 'easeOutCubic'
+                          });
+                        }
+                      }}
+                      className="pb-2"
+                    >
                       <CoverCard
                         anime={a}
                         statusKey={a.status}
@@ -465,7 +479,21 @@ const MyLibraryView = React.memo(({
                 {paginatedLibrary.map((a, index) => {
                   const epWatchedCount = watched[a.title]?.length || 0;
                   return (
-                    <div key={a.title || index} className="flex flex-col h-full">
+                    <div
+                      key={a.title || index}
+                      ref={(el) => {
+                        if (el && index < 9) {
+                          animateIn(el, {
+                            duration: 460,
+                            delay: index * 38,
+                            translateY: [26, 0],
+                            scale: [0.94, 1],
+                            easing: 'easeOutCubic'
+                          });
+                        }
+                      }}
+                      className="flex flex-col h-full"
+                    >
                       <CoverCard
                         anime={a}
                         statusKey={a.status}

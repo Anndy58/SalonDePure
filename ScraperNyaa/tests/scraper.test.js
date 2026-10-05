@@ -6,6 +6,8 @@ import {
   cleanDescriptionText,
   parseViewDetailsHtml, 
   parseListingsHtml,
+  mergeDeepDetails,
+  getRetryAfterMs,
   startBackgroundPrewarmer,
   stopBackgroundPrewarmer,
   scrapeSearchWithDetails
@@ -101,11 +103,58 @@ describe('Nyaa Extractor Helpers', () => {
   });
 
   it('attaches scannedCount and noMoreTorrents stats to result array from scrapeSearchWithDetails', async () => {
-    const results = await scrapeSearchWithDetails({ query: '1080p', limit: 2, mode: 'shallow' });
+    const reportedResults = [];
+    const results = await scrapeSearchWithDetails({
+      query: '1080p',
+      limit: 2,
+      mode: 'shallow',
+      onResult: (item) => reportedResults.push(item)
+    });
     assert.ok(Array.isArray(results));
     assert.ok(results.stats, 'results should have stats property');
     assert.ok(typeof results.stats.scannedCount === 'number');
     assert.ok(typeof results.stats.noMoreTorrents === 'boolean');
+    assert.deepStrictEqual(reportedResults, Array.from(results));
+  });
+
+  it('merges deep details into listings and keeps listing values as fallbacks', () => {
+    const listing = {
+      id: '123456',
+      title: 'Listing title',
+      downloadUrl: 'https://nyaa.si/download/listing.torrent',
+      magnetUrl: 'magnet:?xt=urn:btih:listing',
+      seeders: 30,
+      metadata: { resolution: '1080p' }
+    };
+    const details = {
+      title: 'Detailed title',
+      viewUrl: 'https://nyaa.si/view/123456',
+      downloadUrl: 'https://nyaa.si/download/123456.torrent',
+      descriptionText: 'Cleaned description',
+      files: ['episode.mkv'],
+      metadata: { seeders: 42, hasSpanish: true }
+    };
+
+    const result = mergeDeepDetails(listing, details);
+
+    assert.strictEqual(result.title, 'Detailed title');
+    assert.strictEqual(result.downloadUrl, details.downloadUrl);
+    assert.strictEqual(result.magnetUrl, listing.magnetUrl);
+    assert.strictEqual(result.descriptionText, 'Cleaned description');
+    assert.deepStrictEqual(result.files, ['episode.mkv']);
+    assert.strictEqual(result.seeders, 42);
+    assert.strictEqual(result.metadata.resolution, '1080p');
+    assert.strictEqual(result.metadata.hasSpanish, true);
+    assert.strictEqual(result.deepScraped, true);
+  });
+
+  it('parses Retry-After as seconds or an HTTP date', () => {
+    const now = Date.parse('2026-10-01T12:00:00Z');
+
+    assert.strictEqual(getRetryAfterMs('3', 500, now), 3000);
+    assert.strictEqual(getRetryAfterMs(new Date(now + 4000).toUTCString(), 500, now), 4000);
+    assert.strictEqual(getRetryAfterMs(new Date(now - 1000).toUTCString(), 500, now), 0);
+    assert.strictEqual(getRetryAfterMs('invalid', 500, now), 500);
   });
 });
 

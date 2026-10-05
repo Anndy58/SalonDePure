@@ -1,7 +1,7 @@
 {
   "21": {
-    "offsetSeconds": 561600,
-    "updatedAt": "2026-09-27T15:39:05.599Z"
+    "offsetSeconds": 0,
+    "updatedAt": "2026-10-01T16:29:59.296Z"
   },
   "235": {
     "offsetSeconds": 5520,
@@ -12,12 +12,12 @@
     "updatedAt": "2026-09-27T16:18:38.665Z"
   },
   "2406": {
-    "offsetSeconds": -561600,
-    "updatedAt": "2026-09-27T16:53:37.610Z"
+    "offsetSeconds": 561600,
+    "updatedAt": "2026-10-01T12:55:49.414Z"
   },
   "8687": {
-    "offsetSeconds": 561600,
-    "updatedAt": "2026-09-27T16:18:16.313Z"
+    "offsetSeconds": -100260,
+    "updatedAt": "2026-10-01T16:13:32.935Z"
   },
   "103303": {
     "offsetSeconds": 51060,
@@ -28,8 +28,8 @@
     "updatedAt": "2026-09-27T16:53:13.705Z"
   },
   "135865": {
-    "offsetSeconds": 46800,
-    "updatedAt": "2026-09-27T07:36:14.496Z"
+    "offsetSeconds": 561600,
+    "updatedAt": "2026-09-29T05:47:31.514Z"
   },
   "137653": {
     "offsetSeconds": -39120,
@@ -48,16 +48,20 @@
     "updatedAt": "2026-09-27T16:53:42.466Z"
   },
   "158871": {
-    "offsetSeconds": 561600,
-    "updatedAt": "2026-09-27T16:52:51.530Z"
+    "offsetSeconds": -321330,
+    "updatedAt": "2026-10-01T15:12:13.782Z"
+  },
+  "159042": {
+    "offsetSeconds": 1140,
+    "updatedAt": "2026-10-01T16:13:22.799Z"
   },
   "160803": {
     "offsetSeconds": -561600,
     "updatedAt": "2026-09-27T16:18:25.871Z"
   },
   "165159": {
-    "offsetSeconds": -233460,
-    "updatedAt": "2026-09-27T16:18:13.771Z"
+    "offsetSeconds": 561600,
+    "updatedAt": "2026-10-01T16:13:12.929Z"
   },
   "171110": {
     "offsetSeconds": -561600,
@@ -75,9 +79,13 @@
     "offsetSeconds": 561600,
     "updatedAt": "2026-09-27T16:18:11.263Z"
   },
+  "182205": {
+    "offsetSeconds": 21600,
+    "updatedAt": "2026-10-01T16:29:59.296Z"
+  },
   "182616": {
-    "offsetSeconds": 561600,
-    "updatedAt": "2026-09-27T16:18:28.607Z"
+    "offsetSeconds": 5460,
+    "updatedAt": "2026-10-01T16:13:28.920Z"
   },
   "183231": {
     "offsetSeconds": -561600,
@@ -92,8 +100,8 @@
     "updatedAt": "2026-09-27T14:19:11.396Z"
   },
   "185756": {
-    "offsetSeconds": 2040,
-    "updatedAt": "2026-09-27T15:19:12.222Z"
+    "offsetSeconds": 2100,
+    "updatedAt": "2026-10-01T15:51:42.681Z"
   },
   "185874": {
     "offsetSeconds": -561600,
@@ -108,8 +116,8 @@
     "updatedAt": "2026-09-27T16:17:19.151Z"
   },
   "188525": {
-    "offsetSeconds": 86400,
-    "updatedAt": "2026-09-27T06:49:43.820Z"
+    "offsetSeconds": 77610,
+    "updatedAt": "2026-10-01T12:59:02.823Z"
   },
   "189046": {
     "offsetSeconds": 3660,
@@ -126,6 +134,10 @@
   "196017": {
     "offsetSeconds": -28680,
     "updatedAt": "2026-09-27T06:49:58.418Z"
+  },
+  "196187": {
+    "offsetSeconds": 561600,
+    "updatedAt": "2026-09-30T20:48:26.214Z"
   },
   "197754": {
     "offsetSeconds": 561600,
@@ -148,8 +160,8 @@
     "updatedAt": "2026-09-27T14:19:17.170Z"
   },
   "203490": {
-    "offsetSeconds": -207000,
-    "updatedAt": "2026-09-27T16:18:36.147Z"
+    "offsetSeconds": -561600,
+    "updatedAt": "2026-10-01T16:13:18.923Z"
   },
   "204060": {
     "offsetSeconds": 32400,
@@ -160,8 +172,8 @@
     "updatedAt": "2026-09-27T16:52:43.649Z"
   },
   "204389": {
-    "offsetSeconds": 660,
-    "updatedAt": "2026-09-27T14:19:41.476Z"
+    "offsetSeconds": 240,
+    "updatedAt": "2026-10-01T15:50:19.583Z"
   },
   "204656": {
     "offsetSeconds": 60,
@@ -171,9 +183,17 @@
     "offsetSeconds": 59400,
     "updatedAt": "2026-09-27T06:36:20.698Z"
   },
+  "206401": {
+    "offsetSeconds": -86880,
+    "updatedAt": "2026-10-01T16:13:20.842Z"
+  },
   "206523": {
     "offsetSeconds": 1920,
     "updatedAt": "2026-09-27T15:18:59.543Z"
+  },
+  "207141": {
+    "offsetSeconds": 561600,
+    "updatedAt": "2026-10-01T15:35:44.666Z"
   },
   "207254": {
     "offsetSeconds": -121110,
@@ -209,7 +229,7 @@
   },
   "212888": {
     "offsetSeconds": 600,
-    "updatedAt": "2026-09-27T15:19:09.779Z"
+    "updatedAt": "2026-10-01T15:51:39.194Z"
   },
   "213359": {
     "offsetSeconds": 60120,
@@ -219,9 +239,25 @@
     "offsetSeconds": 60,
     "updatedAt": "2026-09-27T14:20:46.094Z"
   },
+  "213805": {
+    "offsetSeconds": 2940,
+    "updatedAt": "2026-10-01T16:13:26.812Z"
+  },
+  "213961": {
+    "offsetSeconds": 4860,
+    "updatedAt": "2026-09-29T05:48:27.968Z"
+  },
+  "214703": {
+    "offsetSeconds": 312090,
+    "updatedAt": "2026-10-01T16:13:34.834Z"
+  },
   "215835": {
     "offsetSeconds": 960,
-    "updatedAt": "2026-09-27T15:19:14.593Z"
+    "updatedAt": "2026-10-01T15:51:46.510Z"
+  },
+  "216557": {
+    "offsetSeconds": -561600,
+    "updatedAt": "2026-10-01T16:13:38.991Z"
   },
   "216860": {
     "offsetSeconds": -561600,
@@ -236,8 +272,8 @@
     "updatedAt": "2026-09-27T16:56:17.188Z"
   },
   "youjo senki ii": {
-    "offsetSeconds": 46800,
-    "updatedAt": "2026-09-27T07:36:14.520Z"
+    "offsetSeconds": 561600,
+    "updatedAt": "2026-09-29T05:47:31.535Z"
   },
   "sora wa akai kawa no hotori": {
     "offsetSeconds": 3420,
@@ -252,12 +288,12 @@
     "updatedAt": "2026-09-27T16:53:01.021Z"
   },
   "kore kaite shine": {
-    "offsetSeconds": 86400,
-    "updatedAt": "2026-09-27T06:49:43.837Z"
+    "offsetSeconds": 77610,
+    "updatedAt": "2026-10-01T12:59:02.844Z"
   },
   "yasei no last boss ga arawareta! 2nd season": {
-    "offsetSeconds": 660,
-    "updatedAt": "2026-09-27T14:19:41.502Z"
+    "offsetSeconds": 240,
+    "updatedAt": "2026-10-01T15:50:19.593Z"
   },
   "tetsunabe no jan!": {
     "offsetSeconds": 32400,
@@ -324,36 +360,36 @@
     "updatedAt": "2026-09-27T16:18:11.273Z"
   },
   "beyblade x": {
-    "offsetSeconds": -233460,
-    "updatedAt": "2026-09-27T16:18:13.781Z"
+    "offsetSeconds": 561600,
+    "updatedAt": "2026-10-01T16:13:12.947Z"
   },
   "jojo no kimyou na bouken: steel ball run - 2nd & 3rd stage": {
     "offsetSeconds": -561600,
     "updatedAt": "2026-09-27T16:18:21.210Z"
   },
   "nige jouzu no wakagimi 2nd season": {
-    "offsetSeconds": 561600,
-    "updatedAt": "2026-09-27T16:18:28.623Z"
+    "offsetSeconds": 5460,
+    "updatedAt": "2026-10-01T16:13:28.938Z"
   },
   "pocket monsters (2023)": {
-    "offsetSeconds": 561600,
-    "updatedAt": "2026-09-27T16:52:51.541Z"
+    "offsetSeconds": -321330,
+    "updatedAt": "2026-10-01T15:12:13.812Z"
   },
   "rilakkuma": {
     "offsetSeconds": -561600,
     "updatedAt": "2026-09-27T16:18:31.124Z"
   },
   "uchi no otouto-domo ga sumimasen": {
-    "offsetSeconds": -207000,
-    "updatedAt": "2026-09-27T16:18:36.158Z"
+    "offsetSeconds": -561600,
+    "updatedAt": "2026-10-01T16:13:18.937Z"
   },
   "crayon shin-chan": {
     "offsetSeconds": 561600,
     "updatedAt": "2026-09-27T16:18:38.674Z"
   },
   "doraemon (2005)": {
-    "offsetSeconds": 561600,
-    "updatedAt": "2026-09-27T16:18:16.322Z"
+    "offsetSeconds": -100260,
+    "updatedAt": "2026-10-01T16:13:32.949Z"
   },
   "honzuki no gekokujou: ryoushu no youjo": {
     "offsetSeconds": -561600,
@@ -400,12 +436,12 @@
     "updatedAt": "2026-09-27T14:17:43.402Z"
   },
   "one piece": {
-    "offsetSeconds": 561600,
-    "updatedAt": "2026-09-27T15:39:05.624Z"
+    "offsetSeconds": 0,
+    "updatedAt": "2026-10-01T16:29:59.296Z"
   },
   "sazae-san": {
-    "offsetSeconds": -561600,
-    "updatedAt": "2026-09-27T16:53:37.621Z"
+    "offsetSeconds": 561600,
+    "updatedAt": "2026-10-01T12:55:49.427Z"
   },
   "seihantai na kimi to boku 2nd season": {
     "offsetSeconds": 1860,
@@ -413,7 +449,7 @@
   },
   "temppal: item no chikara": {
     "offsetSeconds": 600,
-    "updatedAt": "2026-09-27T15:19:09.807Z"
+    "updatedAt": "2026-10-01T15:51:39.204Z"
   },
   "yami shibai 17": {
     "offsetSeconds": 60120,
@@ -448,11 +484,47 @@
     "updatedAt": "2026-09-27T14:18:25.773Z"
   },
   "tensei kizoku, kantei skill de nariagaru 3rd season": {
-    "offsetSeconds": 2040,
-    "updatedAt": "2026-09-27T15:19:12.236Z"
+    "offsetSeconds": 2100,
+    "updatedAt": "2026-10-01T15:51:42.691Z"
   },
   "umayuru: full gate!": {
     "offsetSeconds": 960,
-    "updatedAt": "2026-09-27T15:19:14.627Z"
+    "updatedAt": "2026-10-01T15:51:46.520Z"
+  },
+  "youjo shenki 2": {
+    "offsetSeconds": 4860,
+    "updatedAt": "2026-09-29T05:48:27.995Z"
+  },
+  "tensei shitara ken deshita 2nd season": {
+    "offsetSeconds": 1140,
+    "updatedAt": "2026-10-01T16:13:22.814Z"
+  },
+  "fx senshi kurumi-chan": {
+    "offsetSeconds": -86880,
+    "updatedAt": "2026-10-01T16:13:20.855Z"
+  },
+  "super no ura de yani suu futari": {
+    "offsetSeconds": 561600,
+    "updatedAt": "2026-09-30T20:48:26.231Z"
+  },
+  "yani neko": {
+    "offsetSeconds": 561600,
+    "updatedAt": "2026-10-01T15:35:44.708Z"
+  },
+  "tensei shitara slime datta ken 4th season part 1 & 2": {
+    "offsetSeconds": 21600,
+    "updatedAt": "2026-10-01T16:29:59.296Z"
+  },
+  "koori no jouheki 2nd season": {
+    "offsetSeconds": 2940,
+    "updatedAt": "2026-10-01T16:13:26.835Z"
+  },
+  "ghost meets gal!": {
+    "offsetSeconds": 312090,
+    "updatedAt": "2026-10-01T16:13:34.849Z"
+  },
+  "keroro gunsou☆": {
+    "offsetSeconds": -561600,
+    "updatedAt": "2026-10-01T16:13:39.005Z"
   }
 }

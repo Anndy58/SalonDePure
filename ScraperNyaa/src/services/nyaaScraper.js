@@ -13,8 +13,8 @@ const cache = new LRUCache({
   ttl: 15 * 60 * 1000
 });
 
-// Concurrency limit for parallel deep-scraping requests
-const limit = pLimit(5);
+export const MAX_CONCURRENT_REQUESTS = 3;
+const limit = pLimit(MAX_CONCURRENT_REQUESTS);
 
 // User-Agent pool for rotation
 const USER_AGENTS = [
@@ -78,6 +78,17 @@ function emitLog(onLog, level, message, details = null) {
   }
 }
 
+export function getRetryAfterMs(retryAfter, fallbackMs, now = Date.now()) {
+  const value = String(retryAfter ?? '').trim();
+  if (!value) return fallbackMs;
+
+  const seconds = Number(value);
+  if (Number.isFinite(seconds)) return Math.max(0, seconds * 1000);
+
+  const retryAt = Date.parse(value);
+  return Number.isNaN(retryAt) ? fallbackMs : Math.max(0, retryAt - now);
+}
+
 /**
  * HTTP GET wrapper with LRU caching, user-agent rotation, optional proxy rotation and Exponential Backoff for 429 handling
  */
@@ -103,7 +114,7 @@ async function fetchHtml(url, useCache = true, retries = 2, delay = 500, onLog =
   }
 
   try {
-    const response = await axiosInstance.get(url, requestOptions);
+    const response = await limit(() => axiosInstance.get(url, requestOptions));
 
     if (useCache) {
       cache.set(url, response.data);
@@ -115,7 +126,7 @@ async function fetchHtml(url, useCache = true, retries = 2, delay = 500, onLog =
 
     if ((status === 429 || status === 503 || status === 502 || error.code === 'ECONNRESET') && retries > 0) {
       const retryAfter = error.response?.headers?.['retry-after'];
-      const waitTime = retryAfter ? parseInt(retryAfter, 10) * 1000 : delay;
+      const waitTime = getRetryAfterMs(retryAfter, delay);
       const jitter = Math.floor(Math.random() * 250);
 
       emitLog(onLog, 'WARN', `⚠️ [HTTP ${status || error.code}] Rate limit en Nyaa. Reintentando en ${waitTime + jitter}ms (${retries} intentos restantes)...`);
@@ -434,6 +445,30 @@ export async function scrapeViewDetails(id, useCache = true) {
   return parseViewDetailsHtml(html, id);
 }
 
+export function mergeDeepDetails(item, details) {
+  const detailMetadata = details.metadata || {};
+
+  return {
+    ...item,
+    title: details.title || item.title,
+    viewUrl: details.viewUrl || item.viewUrl,
+    downloadUrl: details.downloadUrl || item.downloadUrl,
+    magnetUrl: details.magnetUrl || item.magnetUrl,
+    date: detailMetadata.date || item.date,
+    size: detailMetadata.size || item.size,
+    seeders: detailMetadata.seeders ?? item.seeders,
+    leechers: detailMetadata.leechers ?? item.leechers,
+    completed: detailMetadata.completed ?? item.completed,
+    descriptionText: details.descriptionText || '',
+    files: details.files || [],
+    deepScraped: true,
+    metadata: {
+      ...item.metadata,
+      ...detailMetadata
+    }
+  };
+}
+
 /**
  * Searches listings across multiple pages if required and deeply scrapes view details for top items concurrently.
  * Supports flexible modes:
@@ -441,25 +476,33 @@ export async function scrapeViewDetails(id, useCache = true) {
  * - 'shallow': Scrapes listings ONLY without deep scraping (ultra fast ~50ms).
  * - 'details-only': Performs direct deep scraping on provided IDs/URLs without list searching.
  *
- * @param {object} options { query, category, limit, useCache, concurrency, mode, spanishOnly, minSeeders, ids }
+ * @param {object} options { query, category, limit, useCache, mode, spanishOnly, minSeeders, ids }
  * @returns {Promise<Array>} Array of torrent objects
  */
 export async function scrapeSearchWithDetails(options = {}) {
   const {
     limit: itemLimit = 5,
     useCache = true,
-    concurrency = 10,
     mode = 'full',
     spanishOnly = false,
     minSeeders = 0,
     ids = [],
     onLog = null,
+    onResult = null,
     ...searchOptions
   } = options;
 
   emitLog(onLog, 'INFO', `🚀 Iniciando proceso de extracción en modo [${mode.toUpperCase()}] (Meta: ${itemLimit} torrents, Categoría: ${searchOptions.category || '1_0'}, Caché: ${useCache ? 'SI' : 'NO'}, Solo ESP: ${spanishOnly ? 'SI' : 'NO'})`);
 
-  const customLimit = pLimit(Math.min(Math.max(concurrency, 1), 25));
+  const customLimit = pLimit(MAX_CONCURRENT_REQUESTS);
+  const reportResult = (item) => {
+    if (typeof onResult !== 'function') return;
+    try {
+      onResult(item);
+    } catch (error) {
+      emitLog(onLog, 'WARN', `No se pudo notificar el resultado progresivo: ${error.message}`);
+    }
+  };
 
   // MODO: 'details-only'
   if (mode === 'details-only' || (ids && ids.length > 0)) {
@@ -489,6 +532,7 @@ export async function scrapeSearchWithDetails(options = {}) {
     }
 
     const res = items.slice(0, itemLimit);
+    res.forEach(reportResult);
     res.stats = {
       scannedCount: torrentIds.length,
       retried429Count: 0,
@@ -554,7 +598,9 @@ export async function scrapeSearchWithDetails(options = {}) {
         shallowBatch = shallowBatch.filter((item) => item.metadata?.hasSpanish);
       }
 
-      accumulatedResults = accumulatedResults.concat(shallowBatch.slice(0, neededCount));
+      const resultsToAdd = shallowBatch.slice(0, neededCount);
+      accumulatedResults = accumulatedResults.concat(resultsToAdd);
+      resultsToAdd.forEach(reportResult);
     } else {
       // MODO FULL
       const deferredRetryQueue = [];
@@ -564,16 +610,10 @@ export async function scrapeSearchWithDetails(options = {}) {
           const url = `${NYAA_BASE_URL}/view/${item.id}`;
           const html = await fetchHtml(url, useCache, 2, 500, onLog);
           const details = parseViewDetailsHtml(html, item.id);
-            emitLog(onLog, 'SCRAPE', `📄 [Deep Scrape OK] #${item.id} "${item.title.substring(0, 45)}..." -> Subtítulos analizados. Descartando texto de descripción.`);
-          return {
-            ...item,
-            files: details.files,
-            deepScraped: true,
-            metadata: {
-              ...item.metadata,
-              ...details.metadata
-            }
-          };
+          emitLog(onLog, 'SCRAPE', `📄 [Deep Scrape OK] #${item.id} "${item.title.substring(0, 45)}..." -> Descripción, archivos y metadata actualizados.`);
+          const result = mergeDeepDetails(item, details);
+          if (!spanishOnly || result.metadata?.hasSpanish) reportResult(result);
+          return result;
         } catch (err) {
           const is429 = err.response?.status === 429 || err.message?.includes('429');
           if (is429 && retryAttempt < 1) {
@@ -583,7 +623,9 @@ export async function scrapeSearchWithDetails(options = {}) {
             return null;
           }
           emitLog(onLog, 'WARN', `⚠️ Fallo en deep scrape de ID #${item.id}: ${err.message}. Se usará datos básicos del listado.`);
-            return { ...item, deepScraped: false };
+          const result = { ...item, deepScraped: false };
+          if (!spanishOnly || result.metadata?.hasSpanish) reportResult(result);
+          return result;
         }
       };
 
@@ -594,14 +636,14 @@ export async function scrapeSearchWithDetails(options = {}) {
       }
 
       let pageResults = [];
-      const chunkSize = concurrency || 10;
+      const chunkSize = MAX_CONCURRENT_REQUESTS;
 
       // Pipeline paralelo por lotes ajustado para máximo paralelismo
       for (let i = 0; i < itemsToProcess.length; i += chunkSize) {
         if (accumulatedResults.length + pageResults.length >= itemLimit) break;
 
         const chunk = itemsToProcess.slice(i, i + chunkSize);
-        emitLog(onLog, 'INFO', `⚡ [Pipeline Ultra-Rápido] Ejecutando lote paralelo [${i + 1}-${i + chunk.length} de ${itemsToProcess.length}] con ${chunkSize} hilos HTTP persistent...`);
+        emitLog(onLog, 'INFO', `⚡ [Pipeline] Lote [${i + 1}-${i + chunk.length} de ${itemsToProcess.length}] con hasta ${MAX_CONCURRENT_REQUESTS} solicitudes simultáneas.`);
 
         const chunkPromises = chunk.map((item) => customLimit(() => processItem(item, 0)));
         let chunkResults = (await Promise.all(chunkPromises)).filter(Boolean);
@@ -642,33 +684,13 @@ export async function scrapeSearchWithDetails(options = {}) {
   finalResults.stats = {
     scannedCount: totalScanned,
     retried429Count,
-    noMoreTorrents: noMorePagesFound || accumulatedResults.length < itemLimit,
+    noMoreTorrents: noMorePagesFound,
     completedGoal: accumulatedResults.length >= itemLimit
   };
 
   emitLog(onLog, 'SUCCESS', `🎉 Proceso finalizado: ${finalResults.length} torrents válidos obtenidos (${totalScanned} escaneados en Nyaa, ${retried429Count} reintentos 429 recuperados).`);
 
   return finalResults;
-}
-
-/**
- * Generates schedule data organized by anime title or query list
- * @param {Array<string>} animeQueries List of anime search terms
- * @returns {Promise<object>} Grouped schedule object
- */
-export async function generateScheduleData(animeQueries = []) {
-  const schedule = {};
-
-  for (const query of animeQueries) {
-    try {
-      const results = await scrapeSearchWithDetails({ query, limit: 3 });
-      schedule[query] = results;
-    } catch (err) {
-      schedule[query] = { error: err.message, results: [] };
-    }
-  }
-
-  return schedule;
 }
 
 let prewarmerInterval = null;

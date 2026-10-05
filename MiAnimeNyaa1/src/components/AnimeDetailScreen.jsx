@@ -515,15 +515,7 @@ const AnimeDetailScreen = memo(({
       const list = Array.isArray(data) ? data : (data.results || []);
       setTorrents(list);
 
-      if (data.scheduleUpdated && data.newDay) {
-        // Confiamos 100% en el día calculado y normalizado por el backend
-        const displayDay = data.newDay;
-        
-        showNotification(`📅 ¡Calendario actualizado al ${displayDay}!`, "info");
-        window.dispatchEvent(new CustomEvent('taberna:schedule-updated', {
-          detail: { animeTitle: anime.title, newDay: displayDay }
-        }));
-      } else if (list.length === 0) {
+      if (list.length === 0) {
         showNotification("ℹ️ No se encontraron torrents en Prowlarr", "info");
       }
     } catch (e) {

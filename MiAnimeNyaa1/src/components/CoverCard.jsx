@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, memo, useRef } from "react";
 import { Tv, Star } from "lucide-react";
 import { STATUS } from "./StatusButtons";
 import { animateButtonPress } from "../utils/animeUtils";
-import anime from "animejs";
+import animate from "animejs";
 
 const AiringCountdown = memo(({ nextAiringAt }) => {
   const [timeLeft, setTimeLeft] = useState("");
@@ -51,7 +51,7 @@ const CoverCard = memo(({ anime, statusKey, onOpen, colors, watchedCount, viewMo
 
   const handleMouseEnter = () => {
     if (cardRef.current) {
-      anime({
+      animate({
         targets: cardRef.current,
         scale: 1.03,
         duration: 250,
@@ -62,7 +62,7 @@ const CoverCard = memo(({ anime, statusKey, onOpen, colors, watchedCount, viewMo
 
   const handleMouseLeave = () => {
     if (cardRef.current) {
-      anime({
+      animate({
         targets: cardRef.current,
         scale: 1,
         duration: 200,

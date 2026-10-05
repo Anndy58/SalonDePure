@@ -1,6 +1,7 @@
 import assert from 'node:assert';
 import test, { describe, it } from 'node:test';
-import { getTorznabCapabilitiesXml, generateTorznabXml } from '../src/services/torznabService.js';
+import { getTorznabCapabilitiesXml, generateTorznabErrorXml, generateTorznabXml } from '../src/services/torznabService.js';
+import { parseBoundedLimit } from '../src/routes/torznabRoutes.js';
 import app from '../src/app.js';
 
 describe('Torznab Service & Feed Generator', () => {
@@ -35,6 +36,19 @@ describe('Torznab Service & Feed Generator', () => {
     assert.ok(xml.includes('name="seeders" value="100"'));
     assert.ok(xml.includes('name="infohash" value="hash123"'));
     assert.ok(xml.includes('url="https://nyaa.si/download/12345.torrent"'));
+  });
+
+  it('generates an escaped Torznab error response', () => {
+    const xml = generateTorznabErrorXml('Nyaa & unavailable');
+    assert.ok(xml.includes('<error code="400"'));
+    assert.ok(xml.includes('description="Nyaa &amp; unavailable"'));
+  });
+
+  it('clamps Torznab limits to the supported range', () => {
+    assert.strictEqual(parseBoundedLimit('-1', 20, 50), 1);
+    assert.strictEqual(parseBoundedLimit('0', 20, 50), 1);
+    assert.strictEqual(parseBoundedLimit('200', 20, 50), 50);
+    assert.strictEqual(parseBoundedLimit('invalid', 20, 50), 20);
   });
 });
 

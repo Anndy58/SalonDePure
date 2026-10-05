@@ -1,8 +1,14 @@
 import express from 'express';
 import { scrapeListings, scrapeSearchWithDetails } from '../services/nyaaScraper.js';
-import { getTorznabCapabilitiesXml, generateTorznabXml } from '../services/torznabService.js';
+import { getTorznabCapabilitiesXml, generateTorznabErrorXml, generateTorznabXml } from '../services/torznabService.js';
 
 const router = express.Router();
+
+export function parseBoundedLimit(value, fallback, maximum) {
+  const parsed = Number.parseInt(value, 10);
+  if (!Number.isFinite(parsed)) return fallback;
+  return Math.min(Math.max(parsed, 1), maximum);
+}
 
 /**
  * GET /api/torznab
@@ -20,7 +26,7 @@ router.get('/', async (req, res) => {
     }
 
     // Search query handling
-    const parsedLimit = Math.min(parseInt(limit, 10) || 20, 30);
+    const parsedLimit = parseBoundedLimit(limit, 20, 30);
     const isDeep = deep === 'true' || deep === '1';
 
     let items = [];
@@ -36,8 +42,8 @@ router.get('/', async (req, res) => {
     return res.send(xml);
   } catch (error) {
     console.error('Error in Torznab API route:', error.message);
-    res.status(200).set('Content-Type', 'application/xml');
-    return res.send(generateTorznabXml([], `${req.protocol}://${req.get('host')}`));
+    res.set('Content-Type', 'application/xml');
+    return res.send(generateTorznabErrorXml());
   }
 });
 
@@ -51,15 +57,15 @@ router.get('/rss', async (req, res) => {
     const { q = '', c = '1_2', limit = '20' } = req.query;
 
     const listings = await scrapeListings({ query: q, category: c });
-    const trimmed = listings.slice(0, Math.min(parseInt(limit, 10) || 20, 50));
+    const trimmed = listings.slice(0, parseBoundedLimit(limit, 20, 50));
 
     const xml = generateTorznabXml(trimmed, baseUrl);
     res.set('Content-Type', 'application/xml');
     return res.send(xml);
   } catch (error) {
     console.error('Error in RSS route:', error.message);
-    res.status(200).set('Content-Type', 'application/xml');
-    return res.send(generateTorznabXml([], baseUrl));
+    res.set('Content-Type', 'application/xml');
+    return res.send(generateTorznabErrorXml());
   }
 });
 

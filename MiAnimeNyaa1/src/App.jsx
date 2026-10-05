@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef, lazy, Suspense, Profiler } from "react";
-import anime from 'animejs';
-import { animateIn, animateModalIn, animateButtonPress, useAnimeIn, useAnimeModal } from "./utils/animeUtils";
+import { animateIn, animateUnderline, animateModalIn, animateButtonPress } from "./utils/animeUtils";
 import { Routes, Route, Navigate, useNavigate, useLocation } from "react-router-dom";
 import { 
   Palette, Folder, Download, Search, Terminal, X, Wine, Grape, QrCode, Info, User, Settings, MoreVertical,
@@ -434,7 +433,7 @@ const renderRoutes = () => (
                       {isActive && (
                         <div
                           ref={(el) => {
-                            if (el) anime({ targets: el, width: ['0%', '100%'], duration: 300, easing: 'easeOutQuad' });
+                            if (el) animateUnderline(el);
                           }}
                           className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#d4af37] rounded-full shadow-[0_0_15px_rgba(212,175,55,0.6)]"
                         />
@@ -452,7 +451,7 @@ const renderRoutes = () => (
                 <div className="relative z-10 w-full h-full min-w-0">
                   <div
                     key={location.pathname}
-                    ref={(el) => { if (el) animateIn(el, { duration: 350 }); }}
+                    ref={(el) => { if (el) animateIn(el, { duration: 480 }); }}
                     className="w-full h-full"
                   >
                     {renderRoutes()}
@@ -474,7 +473,13 @@ const renderRoutes = () => (
               onSetupAPI={() => {}}
             >
               <div className="magic-board px-2 pt-2">
-                {renderRoutes()}
+                <div
+                  key={location.pathname}
+                  ref={(el) => { if (el) animateIn(el, { duration: 420 }); }}
+                  className="min-h-full w-full"
+                >
+                  {renderRoutes()}
+                </div>
               </div>
             </MobileLayout>
           </div>

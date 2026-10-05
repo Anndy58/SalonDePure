@@ -36,7 +36,7 @@ describe('App Express Server & Static Routes', () => {
     }
   });
 
-  it('POST /api/nyaa/schedule validates request body', async () => {
+  it('POST /api/nyaa/schedule is no longer available', async () => {
     const server = app.listen(0);
     const address = server.address();
     const port = typeof address === 'object' && address !== null ? address.port : 0;
@@ -47,9 +47,31 @@ describe('App Express Server & Static Routes', () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({})
       });
-      assert.strictEqual(res.status, 400);
-      const data = await res.json();
-      assert.strictEqual(data.success, false);
+      assert.strictEqual(res.status, 404);
+    } finally {
+      server.close();
+    }
+  });
+
+  it('streams each shallow result before the completion event', async () => {
+    const server = app.listen(0);
+    const address = server.address();
+    const port = typeof address === 'object' && address !== null ? address.port : 0;
+
+    try {
+      const res = await fetch(`http://localhost:${port}/api/nyaa/stream-logs?q=1080p&mode=shallow&limit=1`);
+      const body = await res.text();
+      const events = body
+        .split(/\r?\n/)
+        .filter((line) => line.startsWith('data: '))
+        .map((line) => JSON.parse(line.slice(6)));
+      const resultIndex = events.findIndex((event) => event.type === 'RESULT');
+      const completeIndex = events.findIndex((event) => event.type === 'COMPLETE');
+
+      assert.strictEqual(res.status, 200);
+      assert.ok(resultIndex >= 0, 'stream should include a result event');
+      assert.ok(completeIndex > resultIndex, 'completion should follow result events');
+      assert.strictEqual(typeof events[completeIndex].stats.scannedCount, 'number');
     } finally {
       server.close();
     }

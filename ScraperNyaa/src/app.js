@@ -4,7 +4,7 @@ import torznabRoutes from './routes/torznabRoutes.js';
 import { startBackgroundPrewarmer } from './services/nyaaScraper.js';
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 6767;
 
 app.use(express.json());
 

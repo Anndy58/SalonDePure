@@ -2,8 +2,8 @@ import express from 'express';
 import { 
   scrapeListings, 
   scrapeViewDetails, 
-  scrapeSearchWithDetails, 
-  generateScheduleData 
+  scrapeSearchWithDetails,
+  MAX_CONCURRENT_REQUESTS
 } from '../services/nyaaScraper.js';
 
 const router = express.Router();
@@ -27,13 +27,11 @@ router.get('/search', async (req, res) => {
       spanishOnly = 'false',
       minSeeders = '0',
       useCache = 'true',
-      concurrency = '10',
       ids = ''
     } = req.query;
 
     const parsedLimit = Math.min(Math.max(parseInt(limit, 10) || 10, 1), 200);
     const isCacheEnabled = useCache !== 'false' && useCache !== '0';
-    const parsedConcurrency = Math.min(Math.max(parseInt(concurrency, 10) || 10, 1), 25);
     const parsedSpanishOnly = spanishOnly === 'true' || spanishOnly === '1';
     const parsedMinSeeders = parseInt(minSeeders, 10) || 0;
     const parsedIds = ids ? ids.split(',').map((id) => id.trim()) : [];
@@ -49,7 +47,6 @@ router.get('/search', async (req, res) => {
       category: c,
       limit: parsedLimit,
       useCache: isCacheEnabled,
-      concurrency: parsedConcurrency,
       mode: effectiveMode,
       spanishOnly: parsedSpanishOnly,
       minSeeders: parsedMinSeeders,
@@ -121,32 +118,6 @@ router.post('/batch-export', (req, res) => {
 });
 
 /**
- * POST /api/nyaa/schedule
- * Body: { queries: ["Solo Leveling", "One Piece", "Frieren"] }
- * Fetches latest torrent releases for a list of anime titles
- */
-router.post('/schedule', async (req, res) => {
-  try {
-    const { queries } = req.body;
-    if (!Array.isArray(queries) || queries.length === 0) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'Please provide an array of anime queries in the request body.' 
-      });
-    }
-
-    // Limit batch size to prevent abuse
-    const limitedQueries = queries.slice(0, 10);
-    const scheduleData = await generateScheduleData(limitedQueries);
-
-    return res.json({ success: true, data: scheduleData });
-  } catch (error) {
-    console.error('Error in /api/nyaa/schedule:', error.message);
-    return res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-/**
  * GET /api/nyaa/stream-logs
  * Server-Sent Events (SSE) route to stream real-time internal scraper logs to frontend
  */
@@ -156,8 +127,16 @@ router.get('/stream-logs', async (req, res) => {
   res.setHeader('Connection', 'keep-alive');
   res.flushHeaders();
 
-  const sendLog = (logObj) => {
-    res.write(`data: ${JSON.stringify(logObj)}\n\n`);
+  const sendEvent = (event) => {
+    if (!res.writableEnded && !res.destroyed) {
+      res.write(`data: ${JSON.stringify(event)}\n\n`);
+    }
+  };
+
+  const sendLog = (logObj) => sendEvent(logObj);
+
+  const sendResult = (item) => {
+    sendEvent({ type: 'RESULT', data: item });
   };
 
   const {
@@ -165,7 +144,6 @@ router.get('/stream-logs', async (req, res) => {
     limit = '10',
     c = '1_0',
     useCache = 'true',
-    concurrency = '10',
     mode = 'full',
     spanishOnly = 'false',
     minSeeders = '0'
@@ -173,7 +151,6 @@ router.get('/stream-logs', async (req, res) => {
 
   const parsedLimit = Math.min(Math.max(parseInt(limit, 10) || 10, 1), 200);
   const isCacheEnabled = useCache !== 'false' && useCache !== '0';
-  const parsedConcurrency = Math.min(Math.max(parseInt(concurrency, 10) || 10, 1), 25);
   const parsedSpanishOnly = spanishOnly === 'true' || spanishOnly === '1';
   const parsedMinSeeders = parseInt(minSeeders, 10) || 0;
 
@@ -183,19 +160,18 @@ router.get('/stream-logs', async (req, res) => {
       category: c,
       limit: parsedLimit,
       useCache: isCacheEnabled,
-      concurrency: parsedConcurrency,
       mode,
       spanishOnly: parsedSpanishOnly,
       minSeeders: parsedMinSeeders,
-      onLog: sendLog
+      onLog: sendLog,
+      onResult: sendResult
     });
 
-    res.write(`data: ${JSON.stringify({ type: 'COMPLETE', data: results })}\n\n`);
+    sendEvent({ type: 'COMPLETE', data: results, stats: results.stats });
     res.end();
   } catch (error) {
-    sendLog({ level: 'ERROR', message: `❌ Fallo en streaming: ${error.message}` });
-    res.write(`data: ${JSON.stringify({ type: 'ERROR', error: error.message })}\n\n`);
-    res.end();
+    sendEvent({ type: 'ERROR', error: error.message });
+    if (!res.writableEnded) res.end();
   }
 });
 
@@ -213,7 +189,6 @@ router.get('/benchmark', async (req, res) => {
       limit = '10',
       c = '1_2',
       useCache = 'true',
-      concurrency = '10',
       mode = 'full',
       spanishOnly = 'false',
       minSeeders = '0'
@@ -221,7 +196,6 @@ router.get('/benchmark', async (req, res) => {
 
     const parsedLimit = Math.min(Math.max(parseInt(limit, 10) || 10, 1), 200);
     const isCacheEnabled = useCache !== 'false' && useCache !== '0';
-    const parsedConcurrency = Math.min(Math.max(parseInt(concurrency, 10) || 10, 1), 25);
     const parsedSpanishOnly = spanishOnly === 'true' || spanishOnly === '1';
     const parsedMinSeeders = parseInt(minSeeders, 10) || 0;
 
@@ -231,7 +205,6 @@ router.get('/benchmark', async (req, res) => {
       category: c,
       limit: parsedLimit,
       useCache: isCacheEnabled,
-      concurrency: parsedConcurrency,
       mode,
       spanishOnly: parsedSpanishOnly,
       minSeeders: parsedMinSeeders
@@ -258,7 +231,7 @@ router.get('/benchmark', async (req, res) => {
         avgMsPerTorrent,
         debug: {
           useCache: isCacheEnabled,
-          concurrency: parsedConcurrency,
+          concurrency: MAX_CONCURRENT_REQUESTS,
           spanishOnly: parsedSpanishOnly,
           minSeeders: parsedMinSeeders
         },

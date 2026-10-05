@@ -1,6 +1,18 @@
 import { useEffect, useRef } from 'react';
 import anime from 'animejs';
 
+const prefersReducedMotion = () => (
+  typeof window !== 'undefined' &&
+  typeof window.matchMedia === 'function' &&
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches
+);
+
+const playAnimation = (targets, options) => {
+  if (!targets || prefersReducedMotion()) return;
+  anime.remove(targets);
+  return anime({ targets, ...options });
+};
+
 /**
  * Hook para animar la entrada de un elemento DOM al montarse sin re-ejecutarse en re-renders.
  */
@@ -11,13 +23,12 @@ export const useAnimeIn = (options = {}) => {
   useEffect(() => {
     if (ref.current && !animatedRef.current) {
       animatedRef.current = true;
-      anime({
-        targets: ref.current,
+      playAnimation(ref.current, {
         opacity: [0, 1],
-        translateY: [15, 0],
-        scale: [0.97, 1],
-        duration: 450,
-        easing: 'easeOutQuad',
+        translateY: [24, 0],
+        scale: [0.95, 1],
+        duration: 520,
+        easing: 'easeOutCubic',
         ...options
       });
     }
@@ -36,12 +47,11 @@ export const useAnimeModal = (options = {}) => {
   useEffect(() => {
     if (ref.current && !animatedRef.current) {
       animatedRef.current = true;
-      anime({
-        targets: ref.current,
+      playAnimation(ref.current, {
         opacity: [0, 1],
         scale: [0.88, 1],
         translateY: [20, 0],
-        duration: 400,
+        duration: 460,
         easing: 'easeOutElastic(1, .8)',
         ...options
       });
@@ -57,13 +67,12 @@ export const useAnimeModal = (options = {}) => {
 export const animateIn = (target, options = {}) => {
   if (!target || target._animeInDone) return;
   target._animeInDone = true;
-  anime({
-    targets: target,
+  playAnimation(target, {
     opacity: [0, 1],
-    translateY: [15, 0],
-    scale: [0.97, 1],
-    duration: 450,
-    easing: 'easeOutQuad',
+    translateY: [24, 0],
+    scale: [0.95, 1],
+    duration: 520,
+    easing: 'easeOutCubic',
     ...options
   });
 };
@@ -74,12 +83,11 @@ export const animateIn = (target, options = {}) => {
 export const animateModalIn = (target, options = {}) => {
   if (!target || target._animeModalDone) return;
   target._animeModalDone = true;
-  anime({
-    targets: target,
+  playAnimation(target, {
     opacity: [0, 1],
     scale: [0.88, 1],
     translateY: [20, 0],
-    duration: 400,
+    duration: 460,
     easing: 'easeOutElastic(1, .8)',
     ...options
   });
@@ -90,8 +98,7 @@ export const animateModalIn = (target, options = {}) => {
  */
 export const animateStagger = (targets, options = {}) => {
   if (!targets || targets.length === 0) return;
-  anime({
-    targets: targets,
+  playAnimation(targets, {
     opacity: [0, 1],
     translateY: [25, 0],
     scale: [0.9, 1],
@@ -107,10 +114,17 @@ export const animateStagger = (targets, options = {}) => {
  */
 export const animateButtonPress = (target) => {
   if (!target) return;
-  anime({
-    targets: target,
+  playAnimation(target, {
     scale: [1, 0.92, 1.05, 1],
     duration: 350,
     easing: 'easeOutBack'
+  });
+};
+
+export const animateUnderline = (target) => {
+  playAnimation(target, {
+    width: ['0%', '100%'],
+    duration: 300,
+    easing: 'easeOutQuad'
   });
 };

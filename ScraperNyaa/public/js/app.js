@@ -57,12 +57,10 @@ let selectedTorrentIndexes = new Set();
 function switchTab(tab) {
   const searchView = document.getElementById('view-search');
   const benchmarkView = document.getElementById('view-benchmark');
-  const scheduleView = document.getElementById('view-schedule');
   const apiView = document.getElementById('view-api');
 
   const tabSearch = document.getElementById('tab-search');
   const tabBenchmark = document.getElementById('tab-benchmark');
-  const tabSchedule = document.getElementById('tab-schedule');
   const tabApi = document.getElementById('tab-api');
 
   const inactiveClass = 'px-4 py-1.5 rounded-lg transition-all flex items-center gap-2 text-slate-400 hover:text-slate-200';
@@ -70,12 +68,10 @@ function switchTab(tab) {
 
   searchView.classList.add('hidden');
   if (benchmarkView) benchmarkView.classList.add('hidden');
-  scheduleView.classList.add('hidden');
   apiView.classList.add('hidden');
 
   tabSearch.className = inactiveClass;
   if (tabBenchmark) tabBenchmark.className = inactiveClass;
-  tabSchedule.className = inactiveClass;
   tabApi.className = inactiveClass;
 
   let activeEl = null;
@@ -88,10 +84,6 @@ function switchTab(tab) {
     if (benchmarkView) benchmarkView.classList.remove('hidden');
     if (tabBenchmark) tabBenchmark.className = activeClass;
     activeEl = benchmarkView;
-  } else if (tab === 'schedule') {
-    scheduleView.classList.remove('hidden');
-    tabSchedule.className = activeClass;
-    activeEl = scheduleView;
   } else if (tab === 'api') {
     apiView.classList.remove('hidden');
     tabApi.className = activeClass;
@@ -157,10 +149,10 @@ async function runLiveBenchmark() {
   const mode = document.getElementById('bench-mode')?.value || 'full';
   const limit = document.getElementById('bench-limit').value || '10';
   const statusMsg = document.getElementById('bench-status-msg');
+  let streamedResultCount = 0;
 
   const useCache = document.getElementById('debug-cache')?.checked !== false;
   const spanishOnly = document.getElementById('bench-spanish-only')?.checked || false;
-  const concurrency = document.getElementById('debug-concurrency')?.value || '10';
 
   btn.disabled = true;
   btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Ejecutando...`;
@@ -170,6 +162,7 @@ async function runLiveBenchmark() {
   if (consoleEl) {
     consoleEl.innerHTML = '';
   }
+  document.getElementById('bench-results-list').innerHTML = '';
 
   appendLogToConsole({ level: 'INFO', message: `▶️ Iniciando transmisión de logs para la búsqueda "${query}" (Límite: ${limit}, Categoría: ${category})...` });
 
@@ -182,8 +175,7 @@ async function runLiveBenchmark() {
       mode: mode,
       limit: limit,
       useCache: useCache ? 'true' : 'false',
-      spanishOnly: spanishOnly ? 'true' : 'false',
-      concurrency: concurrency
+      spanishOnly: spanishOnly ? 'true' : 'false'
     });
 
     const eventSource = new EventSource(`/api/nyaa/stream-logs?${params.toString()}`);
@@ -196,7 +188,7 @@ async function runLiveBenchmark() {
           const durationMs = Date.now() - startTime;
           const results = payload.data || [];
           const torrentsPerSec = parseFloat((results.length / (durationMs / 1000 || 1)).toFixed(2));
-          const stats = results.stats || {};
+          const stats = payload.stats || results.stats || {};
           const spanishCount = results.filter(r => r.metadata?.hasSpanish).length;
 
           // Update Numerical Metrics
@@ -223,6 +215,10 @@ async function runLiveBenchmark() {
           btn.innerHTML = `<i class="fa-solid fa-play"></i> Ejecutar Benchmark`;
         } else if (payload.type === 'ERROR') {
           throw new Error(payload.error || 'Error en streaming de logs');
+        } else if (payload.type === 'RESULT') {
+          streamedResultCount++;
+          renderBenchmarkSampleList([payload.data], true);
+          statusMsg.innerText = `Recibidos ${streamedResultCount} de hasta ${limit} resultados; el análisis sigue en marcha...`;
         } else {
           appendLogToConsole(payload);
         }
@@ -252,12 +248,12 @@ async function runLiveBenchmark() {
 /**
  * Render Sample List of Benchmark Results
  */
-function renderBenchmarkSampleList(results) {
+function renderBenchmarkSampleList(results, append = false) {
   const container = document.getElementById('bench-results-list');
-  container.innerHTML = '';
+  if (!append) container.innerHTML = '';
 
   if (!results || results.length === 0) {
-    container.innerHTML = '<p class="text-xs text-slate-500 italic">Sin resultados obtenidos.</p>';
+    if (!append) container.innerHTML = '<p class="text-xs text-slate-500 italic">Sin resultados obtenidos.</p>';
     return;
   }
 
@@ -635,101 +631,6 @@ function renderModalFiles(files) {
 
 function closeModal() {
   document.getElementById('details-modal').classList.add('hidden');
-}
-
-/**
- * Handle Schedule Form Submit
- */
-async function handleScheduleSubmit(event) {
-  event.preventDefault();
-
-  const rawInput = document.getElementById('schedule-input').value;
-  const queries = rawInput.split(',').map(q => q.trim()).filter(Boolean);
-
-  if (queries.length === 0) {
-    showToast('Ingresa al menos un nombre de anime para generar el schedule', 'error');
-    return;
-  }
-
-  const container = document.getElementById('schedule-results');
-  const loader = document.getElementById('schedule-loader');
-  const grid = document.getElementById('schedule-grid');
-
-  container.classList.remove('hidden');
-  loader.classList.remove('hidden');
-  grid.innerHTML = '';
-
-  try {
-    const res = await fetch('/api/nyaa/schedule', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ queries })
-    });
-
-    const data = await res.json();
-    if (!data.success) {
-      throw new Error(data.error || 'Error al generar schedule');
-    }
-
-    renderScheduleResults(data.data);
-    showToast('Schedule generado exitosamente', 'success');
-  } catch (err) {
-    showToast(`Error: ${err.message}`, 'error');
-  } finally {
-    loader.classList.add('hidden');
-  }
-}
-
-/**
- * Render Schedule Results
- */
-function renderScheduleResults(scheduleData) {
-  const grid = document.getElementById('schedule-grid');
-  grid.innerHTML = '';
-
-  Object.entries(scheduleData).forEach(([animeTitle, items]) => {
-    const card = document.createElement('div');
-    card.className = 'bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-xl';
-
-    let itemsHtml = '';
-    if (Array.isArray(items) && items.length > 0) {
-      itemsHtml = items.map(item => `
-        <div class="bg-slate-950 border border-slate-800/80 rounded-xl p-3 space-y-2">
-          <div class="flex items-start justify-between gap-2">
-            <h4 class="text-xs font-semibold text-slate-200 line-clamp-2">${escapeHtml(item.title)}</h4>
-            ${item.magnetUrl ? `
-              <button onclick="copyMagnet('${escapeHtml(item.magnetUrl)}')" class="text-amber-400 hover:text-amber-300 text-xs p-1">
-                <i class="fa-solid fa-magnet"></i>
-              </button>
-            ` : ''}
-          </div>
-          <div class="flex items-center justify-between text-[11px] text-slate-400">
-            <span>Size: ${escapeHtml(item.size || 'N/A')}</span>
-            <span class="text-emerald-400"><i class="fa-solid fa-arrow-up"></i> ${item.seeders ?? 0}</span>
-            <span>${escapeHtml(item.date || '')}</span>
-          </div>
-        </div>
-      `).join('');
-    } else {
-      itemsHtml = `<p class="text-xs text-slate-500 italic p-3 bg-slate-950 rounded-xl border border-slate-800/60">Sin lanzamientos recientes encontrados para este título.</p>`;
-    }
-
-    card.innerHTML = `
-      <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
-        <h3 class="font-bold text-slate-100 flex items-center gap-2">
-          <i class="fa-solid fa-tv text-purple-400"></i> ${escapeHtml(animeTitle)}
-        </h3>
-        <span class="text-xs font-medium px-2.5 py-0.5 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20">
-          ${Array.isArray(items) ? items.length : 0} items
-        </span>
-      </div>
-      <div class="space-y-3">
-        ${itemsHtml}
-      </div>
-    `;
-
-    grid.appendChild(card);
-  });
 }
 
 /**

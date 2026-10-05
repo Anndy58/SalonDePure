@@ -12,6 +12,10 @@ function escapeXml(unsafe = '') {
     .replace(/'/g, '&apos;');
 }
 
+export function generateTorznabErrorXml(description = 'Search temporarily unavailable') {
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<error code="400" description="${escapeXml(description)}" />`;
+}
+
 /**
  * Generates Torznab Capabilities XML
  */

@@ -1,31 +1,21 @@
 const { app, BrowserWindow, session, Tray, Menu, nativeImage } = require('electron');
 const path = require('path');
-const { spawn, fork } = require('child_process');
+const { fork } = require('child_process');
 
 let mainWindow;
 let serverProcess;
 let tray;
 
 function startBackend() {
-  const userDataPath = app.getPath('userData');
+  if (!app.isPackaged) return;
 
-  if (app.isPackaged) {
-    // EN PRODUCCIÓN: server.js está en resourcesPath/server/
-    const serverPath = path.join(process.resourcesPath, 'server', 'server.js');
-    console.log('[Backend] Iniciando desde:', serverPath);
-    serverProcess = fork(serverPath, [], {
-      env: { ...process.env, TABERNA_DATA_PATH: userDataPath },
-      silent: true
-    });
-  } else {
-    // EN DESARROLLO: server.js está en la raíz/server/
-    // __dirname = scripts/, subimos un nivel para llegar a la raíz
-    const serverPath = path.join(__dirname, '..', 'server', 'server.js');
-    console.log('[Backend] Iniciando desde:', serverPath);
-    serverProcess = spawn('node', ['--watch', serverPath], {
-      env: { ...process.env, TABERNA_DATA_PATH: userDataPath }
-    });
-  }
+  const userDataPath = app.getPath('userData');
+  const serverPath = path.join(process.resourcesPath, 'server', 'server.js');
+  console.log('[Backend] Iniciando desde:', serverPath);
+  serverProcess = fork(serverPath, [], {
+    env: { ...process.env, TABERNA_DATA_PATH: userDataPath },
+    silent: true
+  });
 
   if (serverProcess.stdout) {
     serverProcess.stdout.on('data', (data) => console.log(`[Backend]: ${data}`));
